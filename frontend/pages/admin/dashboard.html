@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Admin Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body" style="padding: 1.5rem; overflow-y: auto; flex: 1;">
+                <section class="dashboard-view">
+                    <!-- Institutional Welcome Banner -->
+                    <div class="welcome-banner-card mb-4">
+                        <div class="welcome-banner-text">
+                            <h1 id="welcome-user-heading">Welcome Back, Admin 👋</h1>
+                            <p>Manage students, faculty, attendance, examinations and academic performance from one unified workspace.</p>
+                            <div class="welcome-info-pills">
+                                <span class="welcome-pill"><i class="fa-solid fa-graduation-cap text-gold"></i> Academic Session 2026–27</span>
+                                <span class="welcome-pill"><i class="fa-solid fa-calendar-day text-blue"></i> <span id="current-date-pill">Today</span></span>
+                                <span class="welcome-pill"><i class="fa-solid fa-user-graduate text-green"></i> Total Enrolled: <strong id="welcome-student-count">...</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Administrative Actions Toolbar -->
+                    <div class="quick-actions-bar mb-4">
+                        <div class="quick-actions-title">
+                            <i class="fa-solid fa-bolt"></i> Quick Administrative Actions:
+                        </div>
+                        <div class="quick-actions-grid">
+                            <button id="btn-trigger-add-student-modal" class="quick-action-btn primary-action"><i class="fa-solid fa-user-plus"></i> + Add Student</button>
+                            <a href="faculty.html" class="quick-action-btn"><i class="fa-solid fa-user-tie"></i> Faculty Directory</a>
+                            <a href="attendance.html" class="quick-action-btn"><i class="fa-solid fa-calendar-check"></i> Class Attendance</a>
+                            <a href="examinations.html" class="quick-action-btn"><i class="fa-solid fa-file-invoice"></i> Upload Marks</a>
+                            <a href="reports.html" class="quick-action-btn"><i class="fa-solid fa-chart-line"></i> Reports & Analytics</a>
+                            <button id="btn-trigger-announcement-modal" class="quick-action-btn gold-action"><i class="fa-solid fa-bullhorn"></i> Post Announcement</button>
+                        </div>
+                    </div>
+
+                    <!-- Statistic Cards (6 Dynamic Cards) -->
+                    <div class="metrics-grid mb-4">
+                        <div class="metric-card glassmorphism" onclick="window.location.href='students.html'">
+                            <div class="metric-icon bg-blue"><i class="fa-solid fa-user-graduate"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Total Students</span>
+                                <h3 id="dash-metric-students" class="count-up">...</h3>
+                                <span class="metric-status-tag"><i class="fa-solid fa-circle-check"></i> Enrolled Records</span>
+                            </div>
+                        </div>
+                        <div class="metric-card glassmorphism" onclick="window.location.href='faculty.html'">
+                            <div class="metric-icon bg-purple"><i class="fa-solid fa-chalkboard-user"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Total Faculty</span>
+                                <h3 id="dash-metric-faculty" class="count-up">...</h3>
+                                <span class="metric-status-tag"><i class="fa-solid fa-users"></i> Teaching Staff</span>
+                            </div>
+                        </div>
+                        <div class="metric-card glassmorphism" onclick="window.location.href='subjects.html'">
+                            <div class="metric-icon bg-yellow"><i class="fa-solid fa-book-open"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Courses & Subjects</span>
+                                <h3 id="dash-metric-courses" class="count-up">...</h3>
+                                <span class="metric-status-tag"><i class="fa-solid fa-layer-group"></i> Active Curriculum</span>
+                            </div>
+                        </div>
+                        <div class="metric-card glassmorphism" onclick="window.location.href='attendance.html'">
+                            <div class="metric-icon bg-green"><i class="fa-solid fa-calendar-days"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Avg Attendance</span>
+                                <h3 id="dash-metric-attendance" class="count-up">...</h3>
+                                <span class="metric-status-tag text-green"><i class="fa-solid fa-arrow-trend-up"></i> Institutional Rate</span>
+                            </div>
+                        </div>
+                        <div class="metric-card glassmorphism" onclick="window.location.href='fees.html'">
+                            <div class="metric-icon bg-blue"><i class="fa-solid fa-wallet"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Fee Collection</span>
+                                <h3 id="dash-metric-fees" class="count-up">...</h3>
+                                <span class="metric-status-tag"><i class="fa-solid fa-receipt"></i> Paid Ratio</span>
+                            </div>
+                        </div>
+                        <div class="metric-card glassmorphism" onclick="window.location.href='reports.html'">
+                            <div class="metric-icon bg-red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">AI Academic High Risk</span>
+                                <h3 id="dash-metric-risk" class="count-up">...</h3>
+                                <span class="metric-status-tag text-red"><i class="fa-solid fa-shield-halved"></i> Requires Support</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Grid Area -->
+                    <div class="dashboard-main-grid">
+                        <!-- Left Column: Analytics Charts & Student Table -->
+                        <div class="dashboard-left-column" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <!-- Charts Row 1: Branch & Year Distribution -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                                <div class="chart-card glassmorphism" style="padding: 1.25rem; border-radius: 14px;">
+                                    <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                        <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);"><i class="fa-solid fa-code-branch text-blue"></i> Students by Branch</h3>
+                                        <span style="font-size: 0.72rem; color: var(--text-muted);">Real DB Data</span>
+                                    </div>
+                                    <div class="chart-container" style="height: 210px; position: relative;">
+                                        <canvas id="branchChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="chart-card glassmorphism" style="padding: 1.25rem; border-radius: 14px;">
+                                    <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                        <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);"><i class="fa-solid fa-layer-group text-gold"></i> Students by Academic Year</h3>
+                                        <span style="font-size: 0.72rem; color: var(--text-muted);">1st - 4th Year</span>
+                                    </div>
+                                    <div class="chart-container" style="height: 210px; position: relative;">
+                                        <canvas id="yearChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Charts Row 2: Attendance & Pass/Fail Ratio -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                                <div class="chart-card glassmorphism" style="padding: 1.25rem; border-radius: 14px;">
+                                    <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                        <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);"><i class="fa-solid fa-chart-pie text-green"></i> Attendance Distribution</h3>
+                                        <span style="font-size: 0.72rem; color: var(--text-muted);">Brackets</span>
+                                    </div>
+                                    <div class="chart-container" style="height: 210px; position: relative;">
+                                        <canvas id="attDistChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="chart-card glassmorphism" style="padding: 1.25rem; border-radius: 14px;">
+                                    <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                        <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);"><i class="fa-solid fa-square-poll-vertical text-purple"></i> Pass / Fail Ratio</h3>
+                                        <span style="font-size: 0.72rem; color: var(--text-muted);">Exams</span>
+                                    </div>
+                                    <div class="chart-container" style="height: 210px; position: relative;">
+                                        <canvas id="passFailChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Charts Row 3: Subject Performance & Grade Distribution -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                                <div class="chart-card glassmorphism" style="padding: 1.25rem; border-radius: 14px;">
+                                    <div class="chart-header" style="margin-bottom: 1rem;">
+                                        <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);"><i class="fa-solid fa-book-bookmark text-blue"></i> Subject Performance</h3>
+                                    </div>
+                                    <div class="chart-container" style="height: 210px; position: relative;">
+                                        <canvas id="subjectPerfChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="chart-card glassmorphism" style="padding: 1.25rem; border-radius: 14px;">
+                                    <div class="chart-header" style="margin-bottom: 1rem;">
+                                        <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);"><i class="fa-solid fa-chart-bar text-gold"></i> Grade Distribution</h3>
+                                    </div>
+                                    <div class="chart-container" style="height: 210px; position: relative;">
+                                        <canvas id="gradeChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Students Registry Table -->
+                            <div class="chart-card glassmorphism" style="padding: 1.25rem; border-radius: 14px;">
+                                <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);"><i class="fa-solid fa-users text-blue"></i> Recent Student Enrollments</h3>
+                                    <a href="students.html" class="btn btn-sm btn-outline" style="text-decoration: none; font-size: 0.8rem; padding: 4px 10px;">View All Registry &rarr;</a>
+                                </div>
+                                <div class="table-responsive" style="overflow-x: auto;">
+                                    <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                                        <thead>
+                                            <tr style="text-align: left; border-bottom: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.82rem;">
+                                                <th style="padding: 10px;">ID</th>
+                                                <th style="padding: 10px;">Student Name</th>
+                                                <th style="padding: 10px;">Department</th>
+                                                <th style="padding: 10px;">Status</th>
+                                                <th style="padding: 10px; text-align: right;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dash-recent-students-tbody">
+                                            <tr><td colspan="5" style="text-align: center; padding: 20px;" class="text-muted">Loading recent student records...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Campus Announcements & Recent Activity Stream -->
+                        <div class="dashboard-right-column" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <!-- Campus Announcements Card -->
+                            <div class="bulletin-card glassmorphism" style="padding: 1.25rem; border-radius: 14px;">
+                                <div class="bulletin-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);"><i class="fa-solid fa-bullhorn text-gold"></i> Campus Announcements</h3>
+                                    <div style="display: flex; gap: 6px;">
+                                        <button id="btn-refresh-announcements" class="btn btn-sm btn-icon" title="Refresh Announcements" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); width: 30px; height: 30px; border-radius: 6px; cursor: pointer;"><i class="fa-solid fa-rotate-right"></i></button>
+                                        <button id="btn-card-post-announcement" class="btn btn-sm btn-gold" style="padding: 4px 10px; font-size: 0.75rem;"><i class="fa-solid fa-plus"></i> Post</button>
+                                    </div>
+                                </div>
+                                <div class="bulletin-list" id="dash-announcements-list">
+                                    <div class="text-muted" style="text-align: center; padding: 20px; font-size: 0.85rem;">Loading announcements...</div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Activity Stream Card -->
+                            <div class="chart-card glassmorphism" style="padding: 1.25rem; border-radius: 14px;">
+                                <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);"><i class="fa-solid fa-clock-rotate-left text-blue"></i> Recent Platform Activity</h3>
+                                    <span style="font-size: 0.72rem; color: var(--text-muted);">Real-time</span>
+                                </div>
+                                <div class="activity-timeline" id="dash-recent-activities-list">
+                                    <div class="text-muted" style="text-align: center; padding: 15px; font-size: 0.82rem;">Loading activity stream...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- 1. EMBEDDED ADD STUDENT MODAL -->
+    <div class="modal-backdrop hidden" id="dash-add-student-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 99999; display: flex; align-items: center; justify-content: center;">
+        <div class="modal-card glassmorphism" style="width: 100%; max-width: 520px; padding: 1.5rem; border-radius: 14px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0; color: var(--accent-blue);"><i class="fa-solid fa-user-plus"></i> Enroll New Student</h3>
+                <button class="modal-close" id="btn-close-add-student-modal" style="background: transparent; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            </div>
+            <form id="form-dash-add-student">
+                <div class="form-group mb-3">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Student ID</label>
+                    <input type="text" id="dash-stu-id" class="form-control" placeholder="e.g. STU101" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main);">
+                </div>
+                <div class="form-group mb-3">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Full Name</label>
+                    <input type="text" id="dash-stu-name" class="form-control" placeholder="e.g. Alex Johnson" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main);">
+                </div>
+                <div class="form-group mb-3">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Email Address</label>
+                    <input type="email" id="dash-stu-email" class="form-control" placeholder="student@example.com" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main);">
+                </div>
+                <div class="form-group mb-3">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Phone Number</label>
+                    <input type="tel" id="dash-stu-phone" class="form-control" placeholder="9876543210" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main);">
+                </div>
+                <div class="form-group mb-3">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Department</label>
+                    <select id="dash-stu-dept" class="form-control" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main);">
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Electrical Engineering">Electrical Engineering</option>
+                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        <option value="Civil Engineering">Civil Engineering</option>
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Course</label>
+                    <input type="text" id="dash-stu-course" class="form-control" placeholder="e.g. B.Tech CS" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main);">
+                </div>
+                <div class="form-group mb-3">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Date of Birth</label>
+                    <input type="date" id="dash-stu-dob" class="form-control" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main);">
+                </div>
+                <div class="form-group mb-4">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Gender</label>
+                    <select id="dash-stu-gender" class="form-control" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main);">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-add-student">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Save Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. POST ANNOUNCEMENT MODAL -->
+    <div class="modal-backdrop hidden" id="post-announcement-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 99999; display: flex; align-items: center; justify-content: center;">
+        <div class="modal-card glassmorphism" style="width: 100%; max-width: 500px; padding: 1.5rem; border-radius: 14px;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0; color: var(--accent-gold);"><i class="fa-solid fa-bullhorn"></i> Broadcast Announcement</h3>
+                <button class="modal-close" id="btn-close-announcement-modal" style="background: transparent; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            </div>
+            <form id="form-post-announcement">
+                <div class="form-group mb-3">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Title</label>
+                    <input type="text" id="announcement-title" class="form-control" placeholder="e.g. Midterm Examination Schedule" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main);">
+                </div>
+                <div class="form-group mb-3">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Target Role</label>
+                    <select id="announcement-role" class="form-control" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main);">
+                        <option value="all">All Roles (Students, Faculty, Staff)</option>
+                        <option value="student">Students Only</option>
+                        <option value="teacher">Faculty Only</option>
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Department</label>
+                    <select id="announcement-dept" class="form-control" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main);">
+                        <option value="All">All Departments</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Electrical Engineering">Electrical Engineering</option>
+                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        <option value="Civil Engineering">Civil Engineering</option>
+                    </select>
+                </div>
+                <div class="form-group mb-4">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Message Content</label>
+                    <textarea id="announcement-message" class="form-control" rows="4" placeholder="Enter full announcement detail..." required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main);"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-announcement">Cancel</button>
+                    <button type="submit" class="btn btn-gold"><i class="fa-solid fa-paper-plane"></i> Publish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. VIEW ANNOUNCEMENT DETAIL MODAL -->
+    <div class="modal-backdrop hidden" id="view-announcement-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 99999; display: flex; align-items: center; justify-content: center;">
+        <div class="modal-card glassmorphism" style="width: 100%; max-width: 520px; padding: 1.5rem; border-radius: 14px;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 id="view-ann-title" style="margin: 0; color: var(--accent-gold); font-size: 1.1rem;">Announcement Detail</h3>
+                <button class="modal-close" id="btn-close-view-ann-modal" style="background: transparent; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px;">
+                    <span>Target: <strong id="view-ann-dept" style="color: var(--accent-blue);">All</strong></span>
+                    <span id="view-ann-date">Date</span>
+                </div>
+                <div id="view-ann-body" style="font-size: 0.9rem; line-height: 1.6; color: var(--text-main); white-space: pre-line; background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 10px; border: 1px solid var(--border-color);"></div>
+                <div style="font-size: 0.78rem; color: var(--accent-gold); margin-top: 10px;">Posted By: <span id="view-ann-author">Admin</span></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <button class="btn btn-outline btn-sm" id="btn-delete-view-ann-btn" style="color: var(--danger); border-color: var(--danger); display: none;"><i class="fa-solid fa-trash-can"></i> Delete Announcement</button>
+                <button class="btn btn-secondary btn-sm" id="btn-close-view-ann-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLOATING AI CHATBOT WIDGET -->
+    <div class="chatbot-floating-trigger" id="chatbot-trigger" title="AI Academic Assistant">
+        <i class="fa-solid fa-brain"></i>
+        <span class="chatbot-pulse"></span>
+    </div>
+    
+    <div class="chatbot-window glassmorphism hidden" id="chatbot-window">
+        <div class="chatbot-header">
+            <div class="chatbot-header-logo"><i class="fa-solid fa-robot"></i></div>
+            <div class="chatbot-header-title">
+                <h4>Academic AI Advisor</h4>
+                <span>Online & Ready</span>
+            </div>
+            <button class="chatbot-close-btn" id="btn-close-chatbot">&times;</button>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages-pane">
+            <div class="chat-bubble assistant">Hello! I am your AI Virtual Academic Assistant. Ask me about your grades, attendance rates, pending fees, and academic risk status.</div>
+        </div>
+        <form class="chatbot-input-area" id="chatbot-submit-form">
+            <input type="text" id="chatbot-msg-input" placeholder="Ask AI Assistant..." required>
+            <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/dashboard.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const authOk = await checkAuth(['admin', 'teacher']);
+            if (authOk) {
+                // Set Header Title
+                const titleEl = document.getElementById('header-view-title');
+                const subEl = document.getElementById('header-view-subtitle');
+                if (titleEl) titleEl.textContent = "Admin Dashboard";
+                if (subEl) subEl.textContent = "Real-time institutional indicators & control panel";
+                
+                // Set Date Pill
+                const datePill = document.getElementById('current-date-pill');
+                if (datePill) {
+                    const now = new Date();
+                    datePill.textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+                }
+
+                // Set Welcome Username
+                const welcomeHead = document.getElementById('welcome-user-heading');
+                if (welcomeHead && STATE.user) {
+                    welcomeHead.textContent = `Welcome back, ${STATE.user.name || STATE.user.username || 'Admin'} 👋`;
+                }
+
+                // Load Analytics Data
+                loadDashboardAnalytics();
+            }
+        });
+    </script>
+</body>
+</html>

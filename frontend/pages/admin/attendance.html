@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Attendance Registry</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section id="view-attendance" class="dashboard-view">
+                    
+                    <!-- Department Categorization Cards -->
+                    <div class="department-category-cards" id="attendance-dept-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem;">
+                        <div class="dept-card glassmorphism active" data-dept-card="All">
+                            <div class="dept-card-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                            <div class="dept-card-info">
+                                <h4>All Departments</h4>
+                                <span class="dept-student-count" id="count-att-all">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Attendance Split Grid -->
+                    <div class="attendance-layout" style="display:grid; grid-template-columns: 380px 1fr; gap:1.5rem; align-items: start; margin-top: 1.25rem;">
+                        
+                        <!-- Left Panel: Class Register Bulk Attendance Marker -->
+                        <div class="attendance-control-panel glassmorphism" style="padding:1.5rem; border-radius: 16px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.25rem;">
+                                <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(59, 130, 246, 0.12); color: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0;">
+                                    <i class="fa-solid fa-clipboard-user"></i>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">Class Attendance Register</h3>
+                                    <p class="text-muted" style="font-size: 0.8rem;">Select subject & mark student check-in</p>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.85rem;">
+                                <div class="form-group">
+                                    <label for="att-dept-select"><i class="fa-solid fa-building-columns"></i> Department / Branch</label>
+                                    <select id="att-dept-select" class="form-control" style="width:100%;">
+                                        <option value="">All Departments</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group-row">
+                                    <div class="form-group col">
+                                        <label for="att-subject-select"><i class="fa-solid fa-book"></i> Select Subject</label>
+                                        <select id="att-subject-select" class="form-control" style="width:100%;">
+                                            <option value="CS101">CS101 - Core Class Subject</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col">
+                                        <label for="att-date"><i class="fa-solid fa-calendar-days"></i> Class Date</label>
+                                        <input type="date" id="att-date" class="form-control" required style="width:100%;">
+                                    </div>
+                                </div>
+
+                                <!-- Quick Preset Actions Bar -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
+                                    <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Bulk Presets:</span>
+                                    <div style="display: flex; gap: 6px;">
+                                        <button type="button" class="btn btn-outline" onclick="setAllStudentsStatus('Present')" style="font-size: 0.75rem; padding: 4px 8px; color: var(--success); border-color: var(--success);">
+                                            <i class="fa-solid fa-check-double"></i> All Present
+                                        </button>
+                                        <button type="button" class="btn btn-outline" onclick="setAllStudentsStatus('Absent')" style="font-size: 0.75rem; padding: 4px 8px; color: var(--danger); border-color: var(--danger);">
+                                            <i class="fa-solid fa-xmark"></i> All Absent
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Class Enrolled Students List Table -->
+                                <div style="max-height: 280px; overflow-y: auto; border: 1px solid var(--glass-border); border-radius: 8px; background: rgba(0,0,0,0.15);">
+                                    <table class="data-table small-table" style="margin: 0; width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>Enrolled Student</th>
+                                                <th>Dept</th>
+                                                <th style="text-align: right;">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="bulk-students-list-body">
+                                            <tr>
+                                                <td colspan="3" class="text-center text-muted" style="padding: 1.5rem;">
+                                                    Loading class student list...
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <button type="button" id="btn-save-bulk-attendance" onclick="saveBulkAttendance()" class="btn btn-primary" style="width: 100%; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Class Attendance
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Live Attendance Logs -->
+                        <div class="attendance-logs-panel glassmorphism" style="padding:1.5rem; border-radius: 16px; display: flex; flex-direction: column; gap: 1.25rem;">
+                            <!-- Header with active department name and stats -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;">
+                                <div>
+                                    <h3 id="current-dept-title" style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                                        <i class="fa-solid fa-building-columns" style="color: var(--accent-blue);"></i> All Departments Attendance
+                                    </h3>
+                                    <p class="text-muted" style="font-size: 0.8rem; margin-top: 2px;" id="current-dept-subtitle">
+                                        Showing attendance records for all institutional branches
+                                    </p>
+                                </div>
+                                <div style="display: flex; gap: 8px; align-items: center;" id="attendance-summary-pills">
+                                    <span class="badge" id="pill-present-count" style="background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3);">
+                                        <i class="fa-solid fa-circle-check"></i> 0 Present
+                                    </span>
+                                    <span class="badge" id="pill-absent-count" style="background: rgba(239, 68, 68, 0.15); color: var(--danger); padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; border: 1px solid rgba(239, 68, 68, 0.3);">
+                                        <i class="fa-solid fa-circle-xmark"></i> 0 Absent
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Filter & Search Controls Bar -->
+                            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+                                <div class="search-box" style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 200px; background: rgba(0,0,0,0.15); border: 1px solid var(--glass-border); padding: 0.45rem 0.9rem; border-radius: 8px;">
+                                    <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                                    <input type="text" id="att-search-input" placeholder="Search student name or ID..." style="background: transparent; border: none; outline: none; width: 100%; color: var(--text-main); font-size: 0.88rem;">
+                                </div>
+                                <select id="att-status-filter" class="form-control" style="padding: 0.45rem 0.85rem; border-radius: 8px; font-size: 0.85rem; width: auto;">
+                                    <option value="">All Statuses</option>
+                                    <option value="Present">Present Only</option>
+                                    <option value="Absent">Absent Only</option>
+                                </select>
+                                <input type="date" id="att-date-filter" class="form-control" style="padding: 0.45rem 0.85rem; border-radius: 8px; font-size: 0.85rem; width: auto;" title="Filter by date">
+                                <button class="btn btn-outline btn-small" id="btn-reset-att-filter" title="Reset Filters" style="padding: 0.5rem 0.85rem;">
+                                    <i class="fa-solid fa-rotate-left"></i> Reset
+                                </button>
+                                <button class="btn btn-secondary btn-small" id="btn-export-pdf" onclick="downloadAttendancePDF()" title="Export Attendance PDF" style="padding: 0.5rem 0.95rem; display: inline-flex; align-items: center; gap: 6px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); font-weight: 600; cursor: pointer; border-radius: 8px;">
+                                    <i class="fa-solid fa-file-pdf"></i> Export PDF
+                                </button>
+                            </div>
+
+                            <!-- Attendance Table -->
+                            <div class="table-container">
+                                <table class="data-table small-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Student</th>
+                                            <th>Department</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Subject / Code</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="attendance-log-body">
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted" style="padding: 2rem;">
+                                                <i class="fa-solid fa-spinner fa-spin"></i> Loading attendance logs...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/attendance.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const authOk = await checkAuth(['admin', 'teacher', 'student']);
+            if (authOk) {
+                document.getElementById('header-view-title').textContent = "Attendance Log";
+                document.getElementById('header-view-subtitle').textContent = "Mark classroom registers, subject check-ins & view percentages";
+                loadAttendanceView();
+            }
+        });
+    </script>
+</body>
+</html>

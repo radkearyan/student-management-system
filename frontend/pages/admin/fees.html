@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Fee Collection Ledger</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section id="view-fees" class="dashboard-view">
+                    <div class="fees-ledger-container glassmorphism" style="padding:1.5rem;">
+                        <div class="ledger-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; border-bottom:1px solid var(--glass-border); padding-bottom:0.75rem;">
+                            <div>
+                                <h3 style="margin:0;">Tuition Fee Ledger</h3>
+                                <p style="font-size:0.85rem; color:var(--text-muted); margin:4px 0 0 0;">Manage student accounts, assign fees, and record collections.</p>
+                            </div>
+                            <div id="fee-summary-stats" class="text-right" style="font-size:0.95rem;">
+                                <span class="ledger-balance-title">Fees Collected: </span><span class="text-green font-bold mr-3" id="ledger-collected">₹0.00</span>
+                                <span class="ledger-balance-title">Outstanding Pending: </span><span class="text-red font-bold" id="ledger-pending">₹0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Filters & Action Bar -->
+                        <div class="filter-action-bar mt-3" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+                            <div class="filters-group" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                <div class="search-input-wrapper" style="position:relative; width:260px;">
+                                    <i class="fa-solid fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted);"></i>
+                                    <input type="text" id="fee-search-input" placeholder="Search by Student ID, Name..." style="width:100%; padding-left:36px; height:38px; font-size:0.85rem;">
+                                </div>
+                                <select id="fee-status-filter" style="height:38px; font-size:0.85rem; padding:0 12px;">
+                                    <option value="all">All Payment Statuses</option>
+                                    <option value="Paid">Paid</option>
+                                    <option value="Pending">Pending</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="btn-open-assign-fee-modal" style="height:38px; display:inline-flex; align-items:center; gap:8px;">
+                                <i class="fa-solid fa-plus-circle"></i> Assign Fee Statement
+                            </button>
+                        </div>
+
+                        <div class="table-container mt-3">
+                            <table class="data-table" id="fees-ledger-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>Department</th>
+                                        <th>Fee Amount</th>
+                                        <th>Payment Date</th>
+                                        <th>Status</th>
+                                        <th>Transaction ID</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fees-table-body">
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted">Loading fee balances...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: Assign Fee Statement -->
+    <div id="add-fee-modal" class="modal-wrapper hidden">
+        <div class="modal-card glassmorphism" style="max-width:520px;">
+            <div class="modal-header">
+                <h3>Assign Tuition Fee Statement</h3>
+                <button class="modal-close-btn" id="btn-close-add-fee-modal">&times;</button>
+            </div>
+            <form id="add-fee-form">
+                <div class="modal-body" style="display:flex; flex-direction:column; gap:1rem;">
+                    <div class="form-group">
+                        <label for="add-fee-target">Assignment Scope *</label>
+                        <select id="add-fee-target" style="width:100%;">
+                            <option value="individual">Individual Student</option>
+                            <option value="department">All Students in Department / Batch</option>
+                        </select>
+                    </div>
+
+                    <!-- Individual Student Dropdown -->
+                    <div class="form-group" id="group-fee-student">
+                        <label for="add-fee-student-id">Select Student *</label>
+                        <select id="add-fee-student-id" style="width:100%;">
+                            <option value="">Loading students list...</option>
+                        </select>
+                    </div>
+
+                    <!-- Department Selector for Bulk Assignment -->
+                    <div class="form-group hidden" id="group-fee-department">
+                        <label for="add-fee-department">Select Department *</label>
+                        <select id="add-fee-department" style="width:100%;">
+                            <option value="All">All Departments (Entire Campus)</option>
+                            <option value="Computer Engineering">Computer Engineering</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Electrical Engineering">Electrical Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="add-fee-amount">Tuition Fee Amount (INR) *</label>
+                        <input type="number" step="0.01" id="add-fee-amount" placeholder="e.g. 1500.00" required style="width:100%;">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-fee-status">Initial Status</label>
+                        <select id="add-fee-status" style="width:100%;">
+                            <option value="Pending">Pending</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer mt-3">
+                    <button type="button" class="btn btn-outline" id="btn-cancel-add-fee-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Assign Statement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Collect Offline Fee -->
+    <div id="collect-fee-modal" class="modal-wrapper hidden">
+        <div class="modal-card glassmorphism" style="max-width:480px;">
+            <div class="modal-header">
+                <h3>Record Offline Fee Payment</h3>
+                <button class="modal-close-btn" id="btn-close-collect-fee-modal">&times;</button>
+            </div>
+            <form id="collect-fee-form">
+                <input type="hidden" id="collect-fee-id">
+                <div class="modal-body" style="display:flex; flex-direction:column; gap:1rem;">
+                    <div class="form-group">
+                        <label>Student Information</label>
+                        <input type="text" id="collect-student-info" readonly style="background:rgba(255,255,255,0.05);">
+                    </div>
+                    <div class="form-group">
+                        <label>Fee Amount (INR)</label>
+                        <input type="text" id="collect-amount-info" readonly style="background:rgba(255,255,255,0.05);">
+                    </div>
+                    <div class="form-group">
+                        <label for="collect-payment-method">Payment Mode</label>
+                        <select id="collect-payment-method">
+                            <option value="Cash Counter">Cash Counter Collection</option>
+                            <option value="Bank Demand Draft">Bank Demand Draft (DD)</option>
+                            <option value="UPI / Online Transfer">Direct UPI / Bank Transfer</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer mt-3">
+                    <button type="button" class="btn btn-outline" id="btn-cancel-collect-fee-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-receipt"></i> Mark Paid & Issue Receipt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Payment Gateway Simulator -->
+    <div id="payment-modal" class="modal-wrapper hidden">
+        <div class="modal-card modal-large glassmorphism">
+            <div class="modal-header">
+                <h3>Secure Tuition Payment Gateway</h3>
+                <button class="modal-close-btn" id="btn-close-payment-modal">&times;</button>
+            </div>
+            <div class="modal-body-large" style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; padding: 1.5rem 0;">
+                <!-- Left: Credit card visual -->
+                <div class="payment-card-visual-wrapper flex-center" style="display:flex; justify-content:center; align-items:center;">
+                    <div class="payment-card-visual bg-blue-purple-gradient">
+                        <div class="card-chip"><i class="fa-solid fa-microchip"></i></div>
+                        <div class="card-brand"><i class="fa-brands fa-cc-visa"></i></div>
+                        <div class="card-number-display" id="card-display-num">•••• •••• •••• ••••</div>
+                        <div class="card-footer">
+                            <div class="card-holder">
+                                <span>Card Holder</span>
+                                <div id="card-display-name">STUDENT NAME</div>
+                            </div>
+                            <div class="card-expiry">
+                                <span>Expires</span>
+                                <div>12/29</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Form checkout -->
+                <form id="payment-gateway-form" style="display:flex; flex-direction:column; gap:12px;">
+                    <input type="hidden" id="pay-student-id">
+                    
+                    <div class="form-group">
+                        <label for="pay-amount-display">Settlement Amount (INR)</label>
+                        <input type="text" id="pay-amount-display" readonly style="background:rgba(255,255,255,0.05);">
+                    </div>
+                    <div class="form-group">
+                        <label for="pay-card-number">Credit / Debit Card Number</label>
+                        <input type="text" id="pay-card-number" maxlength="19" placeholder="4111 2222 3333 4444" required>
+                    </div>
+                    <div class="form-group-row">
+                        <div class="form-group col">
+                            <label for="pay-card-expiry">Expiry Date</label>
+                            <input type="text" id="pay-card-expiry" placeholder="MM/YY" maxlength="5" required style="width:100%;">
+                        </div>
+                        <div class="form-group col">
+                            <label for="pay-card-cvv">CVV Code</label>
+                            <input type="password" id="pay-card-cvv" placeholder="•••" maxlength="3" required style="width:100%;">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-3"><i class="fa-solid fa-shield-halved"></i> Process Secure Checkout</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="btn-cancel-payment-modal">Cancel Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Fee Receipt Print -->
+    <div id="receipt-modal" class="modal-wrapper hidden">
+        <div class="modal-card modal-large glassmorphism print-modal-card">
+            <div class="modal-header no-print">
+                <h3>Print Fee Payment Receipt</h3>
+                <button class="modal-close-btn" id="btn-close-receipt-modal">&times;</button>
+            </div>
+            <div class="modal-body-large print-friendly-content" style="padding: 2rem; background: white; color: black; border-radius: 8px;">
+                <div class="svpcet-print-header" style="display: flex; align-items: center; border-bottom: 2px solid #002d62; padding-bottom: 1rem; margin-bottom: 1.5rem; gap: 1.5rem;">
+                    <img src="/assets/images/svpcet_logo.jpg" alt="SVPCET Logo" class="print-logo" style="width: 80px; height: 80px; object-fit: contain;">
+                    <div class="print-college-title" style="flex: 1;">
+                        <h2 style="color: #002d62; font-size: 1.3rem; font-weight: 800; margin: 0;">STUDENT MANAGEMENT SYSTEM</h2>
+                        <span style="font-size: 0.85rem; color: #444; display: block; font-weight: 500;">Gavsi Manapur, Wardha Road, Nagpur, Maharashtra 441108</span>
+                        <p class="print-motto" style="font-style: italic; font-weight: bold; margin: 2px 0 6px 0; font-size: 0.85rem; color: #b8860b;">Motto: "Arise and Shine"</p>
+                        <h3 class="ticket-title-banner" style="background: #002d62; color: white; display: inline-block; padding: 4px 15px; border-radius: 4px; font-size: 1rem; font-weight: 700; margin: 0;">OFFICIAL FEE PAYMENT RECEIPT</h3>
+                    </div>
+                </div>
+                
+                <div class="receipt-meta-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 1.5rem; border: 1px solid #ccc; padding: 1rem; border-radius: 6px; font-size: 0.9rem; color: #111;">
+                    <div>Receipt No: <strong id="rec-no">REC-001-2026</strong></div>
+                    <div>Payment Date: <strong id="rec-date">2026-08-06</strong></div>
+                    <div>Transaction ID: <strong id="rec-txn">TXN123456</strong></div>
+                    <div>Payment Method: <strong id="rec-method">Online NetBanking / Card Gateway</strong></div>
+                </div>
+                
+                <div class="receipt-info-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 1.5rem; font-size: 0.9rem; color: #222;">
+                    <div>Student Name: <strong id="rec-name">Alice Johnson</strong></div>
+                    <div>Student ID: <strong id="rec-id">STU001</strong></div>
+                    <div>Department: <strong id="rec-dept">Computer Engineering</strong></div>
+                    <div>Course: <strong id="rec-course">B.Tech Computer Engineering</strong></div>
+                </div>
+                
+                <table class="print-table" style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.85rem; color: black; border:1px solid #ddd;">
+                    <thead>
+                        <tr style="background: #f2f2f2; border-bottom: 2px solid #002d62;">
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: 700;">Sr. No.</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: 700;">Description of Account Head</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: 700;">Particulars</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: 700;">Amount (INR)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;">1</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">Tuition Fee Account</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">Semester Academic Tuition Fee Settlement</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">₹ <span id="rec-amount">1500.00</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="receipt-total-block" style="border: 1px solid #002d62; padding: 10px; border-radius: 4px; background: #f9f9f9; text-align: right; font-weight: 700; margin-bottom: 2rem; font-size: 0.95rem;">
+                    <span>Total Amount Paid: </span>
+                    <span id="rec-total-words" style="color: #002d62;">₹ 1,500.00</span>
+                </div>
+                
+                <div class="ticket-signatures-row" style="display: flex; justify-content: space-between; margin-top: 5rem; font-size: 0.85rem; color: #333;">
+                    <div class="sig-box" style="text-align: center; width: 180px;">
+                        <span style="font-weight: 600;">Student's Copy</span>
+                    </div>
+                    <div class="sig-box" style="text-align: center; width: 180px; position: relative;">
+                        <div class="sig-stamp-circle" style="position: absolute; top: -55px; left: 40px; width: 85px; height: 85px; border: 2px dashed blue; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: blue; font-weight: 800; font-size: 0.75rem; transform: rotate(-15deg); background: rgba(0,0,255,0.05)">PAID ONLINE</div>
+                        <div class="sig-line" style="border-top: 1px solid #555; margin-bottom: 6px; width: 100%;"></div>
+                        <span>Accounts Officer</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer no-print">
+                <button type="button" class="btn btn-outline" id="btn-close-receipt-modal-footer">Close</button>
+                <button type="button" class="btn btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button>
+                <button type="button" class="btn btn-secondary" id="btn-download-receipt-pdf" onclick="downloadFeeReceiptPDF()" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-file-pdf"></i> Download PDF Receipt
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/fees.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const authOk = await checkAuth(['admin', 'teacher']);
+            if (authOk) {
+                const titleEl = document.getElementById('header-view-title');
+                if (titleEl) titleEl.textContent = "Tuition Fee Accounts";
+                const subTitleEl = document.getElementById('header-view-subtitle');
+                if (subTitleEl) subTitleEl.textContent = "View balances, collect payments & print receipts";
+                loadFeesLedger();
+            }
+        });
+    </script>
+</body>
+</html>

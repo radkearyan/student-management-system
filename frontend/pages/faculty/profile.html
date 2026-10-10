@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Personal Profile</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section class="dashboard-view">
+                    <div class="glassmorphism" style="padding:2rem;">
+                        <div class="profile-tab-wrapper" style="display: grid; grid-template-columns: 1fr 2.5fr; gap: 2rem;">
+                            <!-- Avatar Section (Left) -->
+                            <div class="profile-avatar-section" style="display:flex; flex-direction:column; align-items:center; border-right:1px solid var(--glass-border); padding-right:1.5rem;">
+                                <div class="profile-avatar-container" id="btn-change-avatar" title="Click to Change Profile Picture" style="width:150px; height:150px; border-radius:50%; border:3px solid var(--accent-gold); position:relative; overflow:hidden; cursor:pointer;">
+                                    <img id="det-avatar-img" class="hidden" src="" alt="Avatar" style="width:100%; height:100%; object-fit:cover;">
+                                    <div id="det-avatar-fallback" class="avatar-fallback" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:3.5rem; font-weight:800; background:rgba(255,255,255,0.05); color:var(--accent-gold);">T</div>
+                                    <div class="profile-avatar-overlay" style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); padding:4px 0; text-align:center; font-size:0.65rem; color:white; display:flex; align-items:center; justify-content:center; gap:4px; opacity:0; transition:opacity 0.2s;">
+                                        <i class="fa-solid fa-camera"></i>
+                                        <span>Upload Photo</span>
+                                    </div>
+                                </div>
+                                <input type="file" id="profile-pic-input" accept="image/*" class="hidden">
+                                <h4 id="det-avatar-name" style="margin-top: 1rem; font-weight: 700; font-size:1.25rem;">Teacher</h4>
+                                <span style="font-size: 0.85rem; color: var(--text-muted);" id="det-avatar-role">Faculty Member</span>
+                            </div>
+
+                            <!-- Details Section (Right) -->
+                            <div class="profile-details-section" style="display:flex; flex-direction:column; gap:1.5rem;">
+                                <div class="profile-section-card">
+                                    <div class="profile-section-title" style="border-bottom:1px solid var(--glass-border); padding-bottom:0.5rem; margin-bottom:1rem; font-weight:700; font-size:1.1rem; color:var(--accent-gold);">
+                                        <i class="fa-solid fa-graduation-cap"></i> Account & Academic Info
+                                    </div>
+                                    <div class="profile-info-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.9rem;">
+                                        <div class="info-field">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">ID / Username:</span>
+                                            <span class="info-val" id="det-id" style="font-weight:600;">teacher</span>
+                                        </div>
+                                        <div class="info-field">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Department:</span>
+                                            <span class="info-val" id="det-dept" style="font-weight:600;">N/A</span>
+                                        </div>
+                                        <div class="info-field">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Degree Course:</span>
+                                            <span class="info-val" id="det-course" style="font-weight:600;">N/A</span>
+                                        </div>
+                                        <div class="info-field">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Date of Birth:</span>
+                                            <span class="info-val" id="det-dob" style="font-weight:600;">N/A</span>
+                                        </div>
+                                        <div class="info-field">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Gender:</span>
+                                            <span class="info-val" id="det-gender" style="font-weight:600;">N/A</span>
+                                        </div>
+                                        <div class="info-field">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Email Address:</span>
+                                            <span class="info-val" id="det-email" style="font-weight:600;">teacher@example.com</span>
+                                        </div>
+                                        <div class="info-field" style="grid-column:span 2;">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Phone:</span>
+                                            <span class="info-val" id="det-phone" style="font-weight:600;">+91-XXXXXXXXXX</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="profile-section-card">
+                                    <div class="profile-section-title" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:0.5rem; margin-bottom:1rem; font-weight:700; font-size:1.1rem; color:var(--accent-gold);">
+                                        <span><i class="fa-solid fa-address-card"></i> Personal Profile & Bio</span>
+                                        <button class="btn btn-outline" id="btn-edit-extra-info" style="font-size: 0.8rem; padding: 6px 12px;"><i class="fa-solid fa-pen-to-square"></i> Edit Info</button>
+                                    </div>
+                                    
+                                    <div id="extra-info-display" class="extra-info-display-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.9rem;">
+                                        <div class="extra-info-field" style="grid-column:span 2;">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Biography / About Me</span>
+                                            <span class="extra-info-val" id="det-bio">No bio added yet.</span>
+                                        </div>
+                                        <div class="extra-info-field" style="grid-column:span 2;">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Key Skills / Interests</span>
+                                            <span class="extra-info-val" id="det-skills">Not specified</span>
+                                        </div>
+                                        <div class="extra-info-field" style="grid-column:span 2;">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Key Achievements</span>
+                                            <span class="extra-info-val" id="det-achievements">None listed</span>
+                                        </div>
+                                        <div class="extra-info-field">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Blood Group</span>
+                                            <span class="extra-info-val" id="det-blood-group">Not specified</span>
+                                        </div>
+                                        <div class="extra-info-field">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Emergency Contact</span>
+                                            <span class="extra-info-val" id="det-emergency-contact">Not specified</span>
+                                        </div>
+                                        <div class="extra-info-field" style="grid-column:span 2;">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Residential Address</span>
+                                            <span class="extra-info-val" id="det-address">No address provided</span>
+                                        </div>
+                                    </div>
+
+                                    <form id="extra-info-form" class="extra-info-form hidden" style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem;">
+                                        <div class="form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                            <div class="form-group">
+                                                <label for="edit-name">Full Name</label>
+                                                <input type="text" id="edit-name" class="form-control" required style="width:100%;">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="edit-email">Email Address</label>
+                                                <input type="email" id="edit-email" class="form-control" required style="width:100%;">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                            <div class="form-group">
+                                                <label for="edit-phone">Phone Number</label>
+                                                <input type="text" id="edit-phone" class="form-control" required style="width:100%;">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="edit-department">Department</label>
+                                                <select id="edit-department" class="form-control" style="width:100%; height: 42px; background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); border-radius: 6px; padding: 0.5rem;"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="edit-bio">Biography / About Me</label>
+                                            <textarea id="edit-bio" class="form-control" placeholder="Tell us about yourself..." style="width:100%;" rows="3"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="edit-skills">Key Skills / Interests</label>
+                                            <input type="text" id="edit-skills" class="form-control" placeholder="e.g. Java, Python, Web Development" style="width:100%;">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="edit-achievements">Key Achievements</label>
+                                            <textarea id="edit-achievements" class="form-control" placeholder="e.g. Hackathon winner" style="width:100%;" rows="2"></textarea>
+                                        </div>
+                                        <div class="form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                            <div class="form-group">
+                                                <label for="edit-blood-group">Blood Group</label>
+                                                <input type="text" id="edit-blood-group" class="form-control" placeholder="e.g. O+, AB-" style="width:100%;">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="edit-emergency-contact">Emergency Contact Phone</label>
+                                                <input type="text" id="edit-emergency-contact" class="form-control" placeholder="e.g. +91 XXXXX XXXXX" style="width:100%;">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="edit-address">Residential Address</label>
+                                            <textarea id="edit-address" class="form-control" placeholder="Enter your full postal address..." style="width:100%;" rows="2"></textarea>
+                                        </div>
+                                        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 1rem;">
+                                            <button type="button" class="btn btn-outline" id="btn-cancel-extra-info">Cancel</button>
+                                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Details</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/profile.js"></script>
+</body>
+</html>

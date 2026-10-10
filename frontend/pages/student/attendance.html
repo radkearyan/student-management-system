@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - My Attendance Logs</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section class="dashboard-view">
+                    <!-- Student Summary Analytics Cards Container -->
+                    <div id="student-attendance-summary"></div>
+
+                    <!-- Attendance Logs Panel -->
+                    <div class="attendance-logs-panel glassmorphism" style="padding:1.5rem; margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                            <div>
+                                <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0 0 4px 0;">
+                                    <i class="fa-solid fa-clock-rotate-left" style="color: var(--accent-blue);"></i> My Attendance Log Stream
+                                </h3>
+                                <p class="text-muted" style="margin: 0; font-size: 0.85rem;">Recorded logs of classroom presence and verification</p>
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <div style="display: flex; gap: 8px; align-items: center;" id="attendance-summary-pills">
+                                    <span class="badge" id="pill-present-count" style="background: rgba(16, 185, 129, 0.15); color: var(--success); font-weight: 600; padding: 6px 12px; border-radius: 20px;"><i class="fa-solid fa-circle-check"></i> 0 Present</span>
+                                    <span class="badge" id="pill-absent-count" style="background: rgba(239, 68, 68, 0.15); color: var(--danger); font-weight: 600; padding: 6px 12px; border-radius: 20px;"><i class="fa-solid fa-circle-xmark"></i> 0 Absent</span>
+                                </div>
+                                <button class="btn btn-secondary btn-small" id="btn-export-pdf" onclick="downloadAttendancePDF()" title="Export Attendance PDF" style="padding: 0.5rem 0.95rem; display: inline-flex; align-items: center; gap: 6px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); font-weight: 600; cursor: pointer; border-radius: 8px;">
+                                    <i class="fa-solid fa-file-pdf"></i> Export My Attendance PDF
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Filters Row -->
+                        <div class="filters-bar" style="display: flex; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center;">
+                            <div class="search-box" style="flex: 1; min-width: 200px;">
+                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                                <input type="text" id="att-search-input" class="form-control" placeholder="Search date or subject code...">
+                            </div>
+                            <div style="min-width: 140px;">
+                                <select id="att-status-filter" class="form-control">
+                                    <option value="">All Statuses</option>
+                                    <option value="Present">Present Only</option>
+                                    <option value="Absent">Absent Only</option>
+                                </select>
+                            </div>
+                            <div style="min-width: 150px;">
+                                <input type="date" id="att-date-filter" class="form-control">
+                            </div>
+                            <button class="btn btn-outline btn-small" id="btn-reset-att-filter" title="Reset Filters" style="padding: 0.5rem 0.8rem;">
+                                <i class="fa-solid fa-rotate-right"></i> Reset
+                            </button>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Department</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Subject / Method</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendance-log-body">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted" style="padding: 2rem;">
+                                            <i class="fa-solid fa-spinner fa-spin"></i> Loading attendance logs...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/attendance.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const authOk = await checkAuth(['student']);
+            if (authOk) {
+                document.getElementById('header-view-title').textContent = "My Attendance";
+                document.getElementById('header-view-subtitle').textContent = "Track class logs & checks";
+                loadAttendanceView();
+            }
+        });
+    </script>
+</body>
+</html>

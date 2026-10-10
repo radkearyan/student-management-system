@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Lecture Timetable</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section class="dashboard-view flex-center" style="height: 60vh; flex-direction: column; text-align: center; gap: 1rem;">
+                    <i class="fa-solid fa-calendar-days" style="font-size: 3.5rem; color: var(--accent-gold);"></i>
+                    <h2>My Lecture Timetable</h2>
+                    <p class="text-muted" style="max-width: 400px;">Review weekly schedules of core classes, elective labs, and slot venues. Currently under development.</p>
+                    <button class="btn btn-primary" onclick="window.history.back()">Go Back</button>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const authOk = await checkAuth(['student']);
+            if (authOk) {
+                document.getElementById('header-view-title').textContent = "Weekly Slot Schedule";
+                document.getElementById('header-view-subtitle').textContent = "Timetable & classroom slots";
+            }
+        });
+    </script>
+</body>
+</html>

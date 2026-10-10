@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Faculty Directory</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section id="view-faculty" class="dashboard-view">
+                    <!-- Action and Filters Bar -->
+                    <div class="action-bar-row" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="search-box" style="display: flex; align-items: center; gap: 8px; flex: 1; max-width: 420px; background: rgba(0,0,0,0.15); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 8px;">
+                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                            <input type="text" id="faculty-search-input" placeholder="Search faculty member name, email or ID..." style="background: transparent; border: none; outline: none; width: 100%; color: var(--text-main);">
+                        </div>
+                        <div class="filters-row" style="display: flex; gap: 0.75rem;">
+                            <select id="faculty-dept-filter" class="form-control" style="background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 8px; outline: none;">
+                                <option value="">All Departments</option>
+                                <option value="Computer Engineering">Computer Engineering</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electrical Engineering">Electrical Engineering</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Faculty Members List Container -->
+                    <div id="faculty-list-container" style="margin-top: 1rem;">
+                        <div class="empty-category-notice glassmorphism" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem;"></i><br>Loading faculty directory...
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/faculty.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const ok = await checkAuth(['teacher', 'admin']);
+            if (ok) {
+                await loadFacultyMembers();
+            }
+        });
+    </script>
+</body>
+</html>

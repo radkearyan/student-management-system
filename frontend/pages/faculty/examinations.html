@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Assessment Hub</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section id="view-exams" class="dashboard-view">
+                    <div id="teacher-exams-view" class="exams-layout-grid" style="display:grid; grid-template-columns:1.2fr 1fr; gap:1.5rem;">
+                        <!-- Left Panel: Create Exams & Upload Marks -->
+                        <div class="exam-form-panel glassmorphism" style="padding:1.5rem;">
+                            <h3>Publish Assessment</h3>
+                            <form id="create-exam-form" style="display:flex; flex-direction:column; gap:10px; margin-bottom:1.5rem;">
+                                <div class="form-group">
+                                    <label for="exam-name">Exam Title</label>
+                                    <input type="text" id="exam-name" placeholder="e.g. Midterm, Practical Class Assessment" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exam-subject">Subject</label>
+                                    <input type="text" id="exam-subject" placeholder="e.g. Data Structures, Linear Algebra" required>
+                                </div>
+                                <div class="form-group-row">
+                                    <div class="form-group col">
+                                        <label for="exam-date">Date</label>
+                                        <input type="date" id="exam-date" required style="width:100%;">
+                                    </div>
+                                    <div class="form-group col">
+                                        <label for="exam-max-marks">Max Marks</label>
+                                        <input type="number" id="exam-max-marks" value="100" min="1" required style="width:100%;">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">Publish Exam</button>
+                            </form>
+
+                            <hr style="border:none; border-bottom:1px solid var(--glass-border); margin:1.5rem 0;">
+
+                            <h3>Submit Marks</h3>
+                            <form id="upload-marks-form" style="display:flex; flex-direction:column; gap:10px;">
+                                <div class="form-group">
+                                    <label for="marks-exam-select">Choose Exam</label>
+                                    <select id="marks-exam-select" required style="width:100%;"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="marks-student-select">Choose Student</label>
+                                    <select id="marks-student-select" required style="width:100%;"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="marks-value">Obtained Marks</label>
+                                    <input type="number" id="marks-value" step="0.5" placeholder="Enter score" required>
+                                </div>
+                                <button type="submit" class="btn btn-success btn-block">Upload Grade</button>
+                            </form>
+                        </div>
+
+                        <!-- Right Panel: List of Exams -->
+                        <div class="exam-list-panel glassmorphism" style="padding:1.5rem;">
+                            <h3>Active Assessment Registry</h3>
+                            <div class="exam-list-container" id="exams-registry-list" style="margin-top:1rem; display:flex; flex-direction:column; gap:10px;"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/results.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const authOk = await checkAuth(['admin', 'teacher']);
+            if (authOk) {
+                document.getElementById('header-view-title').textContent = "Examinations Hub";
+                document.getElementById('header-view-subtitle').textContent = "Upload assessment scores & grades";
+                loadExamsView();
+            }
+        });
+    </script>
+</body>
+</html>

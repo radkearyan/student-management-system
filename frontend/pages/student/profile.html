@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Personal Profile</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <style>
+        .profile-nav-tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 2px solid var(--glass-border);
+            margin-bottom: 1.5rem;
+        }
+        .profile-tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.75rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .profile-tab-btn:hover {
+            color: var(--text-main);
+        }
+        .profile-tab-btn.active {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+        }
+        .profile-stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .profile-stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: rgba(255, 184, 0, 0.15);
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section class="dashboard-view">
+                    <!-- Profile Summary Banner Card -->
+                    <div class="glassmorphism" style="padding: 1.75rem; margin-bottom: 1.5rem;">
+                        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem;">
+                            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                                <div class="profile-avatar-container" id="btn-change-avatar" title="Click to Change Profile Picture" style="width:110px; height:110px; border-radius:50%; border:3px solid var(--accent-gold); position:relative; overflow:hidden; cursor:pointer;">
+                                    <img id="det-avatar-img" class="hidden" src="" alt="Avatar" style="width:100%; height:100%; object-fit:cover;">
+                                    <div id="det-avatar-fallback" class="avatar-fallback" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; font-weight:800; background:rgba(255,255,255,0.05); color:var(--accent-gold);">S</div>
+                                    <div class="profile-avatar-overlay" style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.7); padding:4px 0; text-align:center; font-size:0.65rem; color:white; display:flex; align-items:center; justify-content:center; gap:4px; opacity:0; transition:opacity 0.2s;">
+                                        <i class="fa-solid fa-camera"></i>
+                                        <span>Change</span>
+                                    </div>
+                                </div>
+                                <input type="file" id="profile-pic-input" accept="image/*" class="hidden">
+                                <div>
+                                    <h2 id="det-avatar-name" style="font-weight: 800; font-size: 1.6rem; margin-bottom: 4px;">Student Name</h2>
+                                    <div style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--text-muted);">
+                                        <span id="det-avatar-role" class="badge badge-primary">B.Tech Student</span>
+                                        <span><i class="fa-solid fa-id-card"></i> Roll No: <strong id="header-student-id" style="color: var(--text-main);">STU001</strong></span>
+                                        <span><i class="fa-solid fa-building-columns"></i> <span id="header-dept">Computer Science</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Header Quick Stat Badges -->
+                            <div style="display: flex; gap: 1rem;">
+                                <div class="profile-stat-card">
+                                    <div class="profile-stat-icon"><i class="fa-solid fa-user-check"></i></div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Attendance</div>
+                                        <div id="quick-att-pct" style="font-size: 1.3rem; font-weight: 700; color: #10b981;">--%</div>
+                                    </div>
+                                </div>
+                                <div class="profile-stat-card">
+                                    <div class="profile-stat-icon" style="background: rgba(59,130,246,0.15); color: #3b82f6;"><i class="fa-solid fa-award"></i></div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Academic Score</div>
+                                        <div id="quick-gpa" style="font-size: 1.3rem; font-weight: 700; color: #3b82f6;">--%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Navigation Tabs -->
+                    <div class="profile-nav-tabs">
+                        <button class="profile-tab-btn active" data-tab="tab-personal"><i class="fa-solid fa-user"></i> Personal & Academic</button>
+                        <button class="profile-tab-btn" data-tab="tab-attendance"><i class="fa-solid fa-calendar-check"></i> Attendance Breakdown</button>
+                        <button class="profile-tab-btn" data-tab="tab-marks"><i class="fa-solid fa-file-signature"></i> Marks & Results</button>
+                        <button class="profile-tab-btn" data-tab="tab-announcements"><i class="fa-solid fa-bullhorn"></i> Announcements</button>
+                    </div>
+
+                    <!-- Tab 1: Personal & Academic Info -->
+                    <div id="tab-personal" class="profile-tab-content">
+                        <div class="glassmorphism" style="padding: 1.75rem;">
+                            <div class="profile-details-section" style="display:flex; flex-direction:column; gap:1.5rem;">
+                                <!-- Academic Info Card -->
+                                <div class="profile-section-card">
+                                    <div class="profile-section-title" style="border-bottom:1px solid var(--glass-border); padding-bottom:0.5rem; margin-bottom:1rem; font-weight:700; font-size:1.1rem; color:var(--accent-gold);">
+                                        <i class="fa-solid fa-graduation-cap"></i> Academic Records (Official / Read-only)
+                                    </div>
+                                    <div class="profile-info-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; font-size:0.9rem;">
+                                        <div class="info-field">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Student ID:</span>
+                                            <span class="info-val" id="det-id" style="font-weight:600;">STU001</span>
+                                        </div>
+                                        <div class="info-field">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Department:</span>
+                                            <span class="info-val" id="det-dept" style="font-weight:600;">Computer Science</span>
+                                        </div>
+                                        <div class="info-field">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Degree Course:</span>
+                                            <span class="info-val" id="det-course" style="font-weight:600;">B.Tech CSE</span>
+                                        </div>
+                                        <div class="info-field">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Current Semester / Status:</span>
+                                            <span class="info-val" id="det-status" style="font-weight:600;">Active Enrolled</span>
+                                        </div>
+                                        <div class="info-field">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Date of Birth:</span>
+                                            <span class="info-val" id="det-dob" style="font-weight:600;">2005-04-12</span>
+                                        </div>
+                                        <div class="info-field">
+                                            <span class="info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Gender:</span>
+                                            <span class="info-val" id="det-gender" style="font-weight:600;">Female</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Personal Bio & Contact Card -->
+                                <div class="profile-section-card">
+                                    <div class="profile-section-title" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:0.5rem; margin-bottom:1rem; font-weight:700; font-size:1.1rem; color:var(--accent-gold);">
+                                        <span><i class="fa-solid fa-address-card"></i> Personal Details & Bio</span>
+                                        <button class="btn btn-outline" id="btn-edit-extra-info" style="font-size: 0.8rem; padding: 6px 12px;"><i class="fa-solid fa-pen-to-square"></i> Edit Info</button>
+                                    </div>
+                                    
+                                    <div id="extra-info-display" class="extra-info-display-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:0.9rem;">
+                                        <div class="extra-info-field">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Email Address</span>
+                                            <span class="extra-info-val" id="det-email" style="font-weight:600;">student@example.com</span>
+                                        </div>
+                                        <div class="extra-info-field">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Phone Number</span>
+                                            <span class="extra-info-val" id="det-phone" style="font-weight:600;">Not specified</span>
+                                        </div>
+                                        <div class="extra-info-field" style="grid-column:span 2;">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Biography / About Me</span>
+                                            <span class="extra-info-val" id="det-bio">No bio added yet.</span>
+                                        </div>
+                                        <div class="extra-info-field">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Key Skills / Interests</span>
+                                            <span class="extra-info-val" id="det-skills">Not specified</span>
+                                        </div>
+                                        <div class="extra-info-field">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Key Achievements</span>
+                                            <span class="extra-info-val" id="det-achievements">None listed</span>
+                                        </div>
+                                        <div class="extra-info-field">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Blood Group</span>
+                                            <span class="extra-info-val" id="det-blood-group">Not specified</span>
+                                        </div>
+                                        <div class="extra-info-field">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Emergency Contact</span>
+                                            <span class="extra-info-val" id="det-emergency-contact">Not specified</span>
+                                        </div>
+                                        <div class="extra-info-field" style="grid-column:span 2;">
+                                            <span class="extra-info-label" style="color:var(--text-muted); display:block; font-size:0.8rem;">Residential Address</span>
+                                            <span class="extra-info-val" id="det-address">No address provided</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Editable Form for Authorized Fields -->
+                                    <form id="extra-info-form" class="extra-info-form hidden" style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem;">
+                                        <div class="form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                            <div class="form-group">
+                                                <label for="edit-name">Full Name</label>
+                                                <input type="text" id="edit-name" class="form-control" required style="width:100%;">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="edit-email">Email Address</label>
+                                                <input type="email" id="edit-email" class="form-control" required style="width:100%;">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                            <div class="form-group">
+                                                <label for="edit-phone">Phone Number</label>
+                                                <input type="text" id="edit-phone" class="form-control" required style="width:100%;">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="edit-blood-group">Blood Group</label>
+                                                <input type="text" id="edit-blood-group" class="form-control" placeholder="e.g. O+, AB-" style="width:100%;">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="edit-bio">Biography / About Me</label>
+                                            <textarea id="edit-bio" class="form-control" placeholder="Tell us about yourself..." style="width:100%;" rows="3"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="edit-skills">Key Skills / Interests</label>
+                                            <input type="text" id="edit-skills" class="form-control" placeholder="e.g. Java, Python, Web Development" style="width:100%;">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="edit-achievements">Key Achievements</label>
+                                            <textarea id="edit-achievements" class="form-control" placeholder="e.g. Hackathon winner" style="width:100%;" rows="2"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="edit-emergency-contact">Emergency Contact Phone</label>
+                                            <input type="text" id="edit-emergency-contact" class="form-control" placeholder="e.g. +91 XXXXX XXXXX" style="width:100%;">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="edit-address">Residential Address</label>
+                                            <textarea id="edit-address" class="form-control" placeholder="Enter your full postal address..." style="width:100%;" rows="2"></textarea>
+                                        </div>
+                                        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 1rem;">
+                                            <button type="button" class="btn btn-outline" id="btn-cancel-extra-info">Cancel</button>
+                                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Personal Info</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Attendance Breakdown -->
+                    <div id="tab-attendance" class="profile-tab-content hidden">
+                        <div class="glassmorphism" style="padding: 1.75rem;">
+                            <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h3 style="font-weight: 700; color: var(--accent-gold);"><i class="fa-solid fa-chart-pie"></i> Attendance Summary</h3>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted);">Real-time subject-wise and cumulative attendance records</p>
+                                </div>
+                                <div id="att-warning-banner"></div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">Total Classes Conducted</div>
+                                    <div id="att-summary-total" style="font-size: 1.5rem; font-weight: 700;">0</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">Classes Present</div>
+                                    <div id="att-summary-present" style="font-size: 1.5rem; font-weight: 700; color: #10b981;">0</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">Classes Absent</div>
+                                    <div id="att-summary-absent" style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">0</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">Overall Percentage</div>
+                                    <div id="att-summary-pct" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-gold);">0.0%</div>
+                                </div>
+                            </div>
+
+                            <h4 style="font-weight: 700; margin-bottom: 1rem;">Subject-wise Attendance Breakdown</h4>
+                            <div class="table-responsive">
+                                <table class="data-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Subject Code</th>
+                                            <th>Subject Name</th>
+                                            <th>Classes Present</th>
+                                            <th>Total Conducted</th>
+                                            <th>Attendance %</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbl-subject-attendance-body">
+                                        <tr>
+                                            <td colspan="6" style="text-align: center; color: var(--text-muted);">Loading attendance data...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Marks & Results -->
+                    <div id="tab-marks" class="profile-tab-content hidden">
+                        <div class="glassmorphism" style="padding: 1.75rem;">
+                            <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h3 style="font-weight: 700; color: var(--accent-gold);"><i class="fa-solid fa-graduation-cap"></i> Academic Transcript & Results</h3>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted);">Official examination marks and grade status</p>
+                                </div>
+                                <span id="res-overall-status-badge" class="badge badge-success" style="font-size: 0.9rem; padding: 6px 14px;">Academic Record</span>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">Total Marks Obtained</div>
+                                    <div id="res-total-obt" style="font-size: 1.5rem; font-weight: 700;">0</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">Maximum Possible Marks</div>
+                                    <div id="res-total-max" style="font-size: 1.5rem; font-weight: 700;">0</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">Overall Percentage</div>
+                                    <div id="res-overall-pct" style="font-size: 1.5rem; font-weight: 700; color: #3b82f6;">0.0%</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">Cumulative Grade</div>
+                                    <div id="res-overall-grade" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-gold);">-</div>
+                                </div>
+                            </div>
+
+                            <h4 style="font-weight: 700; margin-bottom: 1rem;">Subject Marks Breakdown</h4>
+                            <div class="table-responsive">
+                                <table class="data-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Exam Title</th>
+                                            <th>Subject</th>
+                                            <th>Marks Obtained</th>
+                                            <th>Max Marks</th>
+                                            <th>Percentage</th>
+                                            <th>Grade</th>
+                                            <th>Result Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbl-marks-body">
+                                        <tr>
+                                            <td colspan="7" style="text-align: center; color: var(--text-muted);">Loading marks records...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: Announcements -->
+                    <div id="tab-announcements" class="profile-tab-content hidden">
+                        <div class="glassmorphism" style="padding: 1.75rem;">
+                            <h3 style="font-weight: 700; color: var(--accent-gold); margin-bottom: 1rem;"><i class="fa-solid fa-bullhorn"></i> Campus Announcements & Circulars</h3>
+                            <div id="announcements-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading announcements...</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Course Evaluations</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section id="view-feedback" class="dashboard-view">
+                    <div id="student-feedback-view" class="feedback-layout-grid" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem;">
+                        <!-- Left Panel: Submission Form -->
+                        <div class="feedback-form-panel glassmorphism" style="padding: 1.5rem;">
+                            <h3>Course & Teacher Feedback</h3>
+                            <p class="text-muted" style="margin-bottom: 1.5rem;">Evaluate teaching-learning performance for your current semester subjects</p>
+                            
+                             <form id="submit-feedback-form" style="display: flex; flex-direction: column; gap: 1.2rem;">
+                                <div class="form-group">
+                                    <label for="feedback-subject">Subject / Course</label>
+                                    <select id="feedback-subject" class="form-control" required style="width: 100%;">
+                                        <option value="">-- Choose Subject --</option>
+                                        <option value="Advanced Data Structures">Advanced Data Structures</option>
+                                        <option value="Linear Algebra">Linear Algebra</option>
+                                        <option value="Power Systems Analysis">Power Systems Analysis</option>
+                                        <option value="Database Management Systems">Database Management Systems</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="feedback-faculty">Faculty Member</label>
+                                    <select id="feedback-faculty" class="form-control" required style="width: 100%;">
+                                        <option value="">-- Choose Faculty --</option>
+                                        <option value="Dr. A. P. Sinha">Dr. A. P. Sinha</option>
+                                        <option value="Prof. Mrs. R. K. Gite">Prof. Mrs. R. K. Gite</option>
+                                        <option value="Dr. J. M. Patil">Dr. J. M. Patil</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="feedback-rating-questions" style="display: flex; flex-direction: column; gap: 1rem; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px;">
+                                    <div class="rating-question" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                                        <label>1. Punctuality & regularity of the faculty in conducting classes:</label>
+                                        <div class="star-rating" data-q="1" style="display: flex; gap: 6px; align-items: center;">
+                                            <input type="radio" name="q1" value="1" id="q1-1" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q1-1" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q1" value="2" id="q1-2" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q1-2" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q1" value="3" id="q1-3" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q1-3" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q1" value="4" id="q1-4" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q1-4" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q1" value="5" id="q1-5" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q1-5" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                        </div>
+                                    </div>
+                                    <div class="rating-question" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                                        <label>2. Quality of syllabus coverage, concept explanation & examples:</label>
+                                        <div class="star-rating" data-q="2" style="display: flex; gap: 6px; align-items: center;">
+                                            <input type="radio" name="q2" value="1" id="q2-1" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q2-1" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q2" value="2" id="q2-2" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q2-2" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q2" value="3" id="q2-3" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q2-3" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q2" value="4" id="q2-4" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q2-4" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q2" value="5" id="q2-5" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q2-5" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                        </div>
+                                    </div>
+                                    <div class="rating-question" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                                        <label>3. Communication skills, audibility & presentation clarity:</label>
+                                        <div class="star-rating" data-q="3" style="display: flex; gap: 6px; align-items: center;">
+                                            <input type="radio" name="q3" value="1" id="q3-1" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q3-1" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q3" value="2" id="q3-2" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q3-2" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q3" value="3" id="q3-3" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q3-3" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q3" value="4" id="q3-4" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q3-4" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q3" value="5" id="q3-5" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q3-5" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                        </div>
+                                    </div>
+                                    <div class="rating-question" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                                        <label>4. Availability of faculty outside classes to resolve queries & guide:</label>
+                                        <div class="star-rating" data-q="4" style="display: flex; gap: 6px; align-items: center;">
+                                            <input type="radio" name="q4" value="1" id="q4-1" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q4-1" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q4" value="2" id="q4-2" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q4-2" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q4" value="3" id="q4-3" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q4-3" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q4" value="4" id="q4-4" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q4-4" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q4" value="5" id="q4-5" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q4-5" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                        </div>
+                                    </div>
+                                    <div class="rating-question" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                                        <label>5. Fairness in internal evaluation & helpfulness of assessments:</label>
+                                        <div class="star-rating" data-q="5" style="display: flex; gap: 6px; align-items: center;">
+                                            <input type="radio" name="q5" value="1" id="q5-1" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q5-1" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q5" value="2" id="q5-2" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q5-2" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q5" value="3" id="q5-3" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q5-3" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q5" value="4" id="q5-4" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q5-4" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                            <input type="radio" name="q5" value="5" id="q5-5" style="position: absolute; opacity: 0; pointer-events: none;"><label for="q5-5" class="fa-solid fa-star" style="font-size: 1.25rem; color: #444; cursor: pointer; transition: color 0.2s;"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="feedback-comments">Additional Suggestions / Comments (Optional)</label>
+                                    <textarea id="feedback-comments" class="form-control" rows="3" placeholder="Enter comments here..." style="width: 100%;"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">Submit Feedback</button>
+                            </form>
+                        </div>
+
+                        <!-- Right Panel: Submitted Feedbacks History -->
+                        <div class="feedback-history-panel glassmorphism" style="padding: 1.5rem;">
+                            <h3>Your Submitted Feedbacks</h3>
+                            <div id="feedback-student-history" class="feedback-history-list mt-3" style="display: flex; flex-direction: column; gap: 10px;">
+                                <div class="text-center text-muted">Loading history...</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const authOk = await checkAuth(['student']);
+            if (authOk) {
+                document.getElementById('header-view-title').textContent = "Academic Feedback";
+                document.getElementById('header-view-subtitle').textContent = "Evaluate course teaching quality surveys";
+                
+                bindStarRatingEvents();
+                loadFeedbackView();
+            }
+        });
+
+        async function loadFeedbackView() {
+            // Reset form
+            const form = document.getElementById('submit-feedback-form');
+            if (form) form.reset();
+            resetFeedbackStars();
+            
+            // Load history
+            const res = await API.get('/api/feedback');
+            const historyContainer = document.getElementById('feedback-student-history');
+            if (!historyContainer) return;
+            historyContainer.innerHTML = '';
+            
+            if (res && res.success && res.feedback && res.feedback.length > 0) {
+                res.feedback.forEach(f => {
+                    const item = document.createElement('div');
+                    item.className = 'feedback-history-card glassmorphism';
+                    item.style = 'padding: 12px; border-radius: 8px; font-size: 0.85rem;';
+                    
+                    const avgRating = (((f.q1 || 0) + (f.q2 || 0) + (f.q3 || 0) + (f.q4 || 0) + (f.q5 || 0)) / 5).toFixed(1);
+                    
+                    item.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; font-weight:600; color:var(--accent-gold);">
+                            <span>${f.subject}</span>
+                            <span>Rating: ${avgRating}/5.0</span>
+                        </div>
+                        <div style="font-size:0.8rem; opacity:0.8; margin-top:4px;">Faculty: <strong>${f.faculty_name}</strong></div>
+                        ${f.comments ? `<div style="font-style:italic; font-size:0.75rem; color:var(--text-muted); margin-top:4px;">"${f.comments}"</div>` : ''}
+                        <div style="text-align:right; font-size:0.7rem; color:var(--text-muted); margin-top:4px;">Submitted: ${f.created_at || 'Just now'}</div>
+                    `;
+                    historyContainer.appendChild(item);
+                });
+            } else {
+                historyContainer.innerHTML = '<div class="text-center text-muted">No feedbacks submitted yet.</div>';
+            }
+        }
+
+        function resetFeedbackStars() {
+            document.querySelectorAll('.star-rating').forEach(container => {
+                const radios = container.querySelectorAll('input[type="radio"]');
+                radios.forEach(r => r.checked = false);
+                container.querySelectorAll('label').forEach(label => {
+                    label.style.color = '#444';
+                });
+            });
+        }
+
+        function bindStarRatingEvents() {
+            document.querySelectorAll('.star-rating').forEach(container => {
+                const labels = container.querySelectorAll('label');
+                labels.forEach(lbl => {
+                    lbl.onclick = (e) => {
+                        e.preventDefault();
+                        const targetId = lbl.getAttribute('for');
+                        const targetRadio = document.getElementById(targetId);
+                        if (targetRadio) {
+                            targetRadio.checked = true;
+                            const val = parseInt(targetRadio.value);
+                            labels.forEach(l => {
+                                const lId = l.getAttribute('for');
+                                const lVal = parseInt(lId.split('-')[1]);
+                                if (lVal <= val) {
+                                    l.style.color = 'var(--accent-gold)';
+                                } else {
+                                    l.style.color = '#444';
+                                }
+                            });
+                        }
+                    };
+                });
+            });
+        }
+
+        // Form submit
+        document.getElementById('submit-feedback-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const subject = document.getElementById('feedback-subject').value;
+            const faculty_name = document.getElementById('feedback-faculty').value;
+            
+            const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+            const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+            const q3 = document.querySelector('input[name="q3"]:checked')?.value;
+            const q4 = document.querySelector('input[name="q4"]:checked')?.value;
+            const q5 = document.querySelector('input[name="q5"]:checked')?.value;
+            const comments = document.getElementById('feedback-comments').value;
+            
+            if (!subject) {
+                showToast("Missing Field", "Please choose a subject.", "warning");
+                return;
+            }
+
+            if (!faculty_name) {
+                showToast("Missing Field", "Please choose a faculty member.", "warning");
+                return;
+            }
+
+            if (!q1 || !q2 || !q3 || !q4 || !q5) {
+                showToast("Missing Ratings", "Please rate all 5 evaluation questions.", "warning");
+                return;
+            }
+            
+            const payload = {
+                subject, faculty_name,
+                q1: parseInt(q1), q2: parseInt(q2), q3: parseInt(q3), q4: parseInt(q4), q5: parseInt(q5),
+                comments
+            };
+            
+            const res = await API.post('/api/feedback/submit', payload);
+            if (res && res.success) {
+                showToast("Feedback Submitted", "Thank you for participating in the teaching feedback!", "success");
+                loadFeedbackView();
+            } else {
+                showToast("Error", res ? res.message : "Feedback submission failed.", "error");
+            }
+        };
+    </script>
+</body>
+</html>

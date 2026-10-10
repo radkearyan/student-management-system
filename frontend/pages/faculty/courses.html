@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Degree Courses Plan</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section id="view-courses" class="dashboard-view">
+                    <div class="action-bar-row" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div>
+                            <h2 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Degree Courses & Academic Curriculum</h2>
+                            <p class="text-muted" style="font-size: 0.82rem; margin: 2px 0 0 0;">View degree structures, durations, and credit allocations</p>
+                        </div>
+                        <div class="search-box" style="display: flex; align-items: center; gap: 8px; flex: 1; max-width: 380px; background: rgba(0,0,0,0.15); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 8px;">
+                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                            <input type="text" id="course-page-search" placeholder="Search course title or code..." style="background: transparent; border: none; outline: none; width: 100%; color: var(--text-main);">
+                        </div>
+                    </div>
+
+                    <!-- Courses Grid Container -->
+                    <div id="courses-grid-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+                        <div class="empty-category-notice glassmorphism" style="grid-column: 1 / -1; padding: 2rem; text-align: center; color: var(--text-muted);">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem;"></i><br>Loading degree course plans...
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        let allCourses = [];
+        document.addEventListener("DOMContentLoaded", async () => {
+            const ok = await checkAuth(['teacher', 'admin']);
+            if (ok) {
+                await loadCoursesPage();
+
+                const searchInput = document.getElementById('course-page-search');
+                if (searchInput) {
+                    searchInput.oninput = (e) => {
+                        const sq = e.target.value.toLowerCase().trim();
+                        const filtered = allCourses.filter(c => 
+                            (c.course_name && c.course_name.toLowerCase().includes(sq)) || 
+                            (c.course_code && c.course_code.toLowerCase().includes(sq))
+                        );
+                        renderCoursesGrid(filtered);
+                    };
+                }
+            }
+        });
+
+        async function loadCoursesPage() {
+            const res = await apiFetch('/api/courses');
+            if (res && res.success) {
+                allCourses = res.courses || [];
+                renderCoursesGrid(allCourses);
+            }
+        }
+
+        function renderCoursesGrid(courses) {
+            const container = document.getElementById('courses-grid-container');
+            if (!container) return;
+
+            if (!courses || courses.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-category-notice glassmorphism" style="grid-column: 1 / -1; padding: 3rem; text-align: center; color: var(--text-muted);">
+                        <i class="fa-solid fa-graduation-cap" style="font-size: 2.5rem; color: var(--accent-gold); margin-bottom: 1rem;"></i>
+                        <h3>No Degree Courses Found</h3>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            courses.forEach(c => {
+                html += `
+                    <div class="course-card glassmorphism" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); font-weight: 700;">${c.course_code}</span>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-solid fa-clock"></i> ${c.duration_years || 4} Years</span>
+                            </div>
+                            <h3 style="margin-top: 10px; font-weight: 700; font-size: 1.15rem; color: var(--text-main);">${c.course_name || c.name}</h3>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+                                <i class="fa-solid fa-building-columns"></i> ${c.department}
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-border); padding-top: 0.75rem;">
+                            <span style="font-size: 0.78rem; color: var(--text-muted);">Accredited Program</span>
+                            <span class="badge badge-green" style="font-size: 0.75rem;"><i class="fa-solid fa-circle-check"></i> Active</span>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

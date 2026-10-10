@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Subjects Registry</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section id="view-subjects" class="dashboard-view">
+                    <!-- Department Categorization Cards -->
+                    <div class="department-category-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem;">
+                        <div class="dept-cat-card glassmorphism" data-dept="Computer Engineering" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+                            <div class="dept-cat-icon" style="font-size: 1.8rem; color: var(--accent-blue);"><i class="fa-solid fa-laptop-code"></i></div>
+                            <div class="dept-cat-info">
+                                <h4>Computer Engg</h4>
+                                <span class="dept-student-count" id="count-sub-computer">0 Subjects</span>
+                            </div>
+                        </div>
+                        <div class="dept-cat-card glassmorphism" data-dept="Information Technology" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+                            <div class="dept-cat-icon" style="font-size: 1.8rem; color: var(--accent-gold);"><i class="fa-solid fa-network-wired"></i></div>
+                            <div class="dept-cat-info">
+                                <h4>Information Tech</h4>
+                                <span class="dept-student-count" id="count-sub-it">0 Subjects</span>
+                            </div>
+                        </div>
+                        <div class="dept-cat-card glassmorphism" data-dept="Electrical Engineering" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+                            <div class="dept-cat-icon" style="font-size: 1.8rem; color: var(--success);"><i class="fa-solid fa-bolt"></i></div>
+                            <div class="dept-cat-info">
+                                <h4>Electrical Engg</h4>
+                                <span class="dept-student-count" id="count-sub-electrical">0 Subjects</span>
+                            </div>
+                        </div>
+                        <div class="dept-cat-card glassmorphism" data-dept="Mechanical Engineering" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+                            <div class="dept-cat-icon" style="font-size: 1.8rem; color: #8b5cf6;"><i class="fa-solid fa-gears"></i></div>
+                            <div class="dept-cat-info">
+                                <h4>Mechanical Engg</h4>
+                                <span class="dept-student-count" id="count-sub-mechanical">0 Subjects</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filters Bar -->
+                    <div class="action-bar-row" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 1rem;">
+                        <div class="search-box" style="display: flex; align-items: center; gap: 8px; flex: 1; max-width: 420px; background: rgba(0,0,0,0.15); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 8px;">
+                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                            <input type="text" id="subject-search-input" placeholder="Search subject by title or code..." style="background: transparent; border: none; outline: none; width: 100%; color: var(--text-main);">
+                        </div>
+                        <div class="filters-row" style="display: flex; gap: 0.75rem;">
+                            <select id="subject-dept-filter" class="form-control" style="background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 8px; outline: none;">
+                                <option value="">All Departments</option>
+                                <option value="Computer Engineering">Computer Engineering</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electrical Engineering">Electrical Engineering</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            </select>
+                            <select id="subject-sem-filter" class="form-control" style="background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 8px; outline: none;">
+                                <option value="">All Semesters</option>
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="4">Semester 4</option>
+                                <option value="5">Semester 5</option>
+                                <option value="6">Semester 6</option>
+                                <option value="7">Semester 7</option>
+                                <option value="8">Semester 8</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Data Table Container -->
+                    <div id="subjects-list-container" style="margin-top: 1rem;">
+                        <div class="empty-category-notice glassmorphism" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem;"></i><br>Loading subjects directory...
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/subjects.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const ok = await checkAuth(['student']);
+            if (ok) {
+                await loadSubjectsList();
+            }
+        });
+    </script>
+</body>
+</html>

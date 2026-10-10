@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Academic Reports</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <style>
+        .report-tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 2px solid var(--glass-border);
+            margin-bottom: 1.5rem;
+        }
+        .report-tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.75rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .report-tab-btn:hover {
+            color: var(--text-main);
+        }
+        .report-tab-btn.active {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+        }
+        .filter-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section class="dashboard-view">
+                    <!-- Navigation Tabs -->
+                    <div class="report-tabs">
+                        <button class="report-tab-btn active" data-tab="tab-students-report"><i class="fa-solid fa-users"></i> Student List Report</button>
+                        <button class="report-tab-btn" data-tab="tab-attendance-report"><i class="fa-solid fa-calendar-check"></i> Attendance Report</button>
+                        <button class="report-tab-btn" data-tab="tab-results-report"><i class="fa-solid fa-file-signature"></i> Marks / Results Report</button>
+                        <button class="report-tab-btn" data-tab="tab-feedback-report"><i class="fa-solid fa-comments"></i> Teaching Feedback</button>
+                    </div>
+
+                    <!-- Report 1: Student List Report -->
+                    <div id="tab-students-report" class="report-tab-content">
+                        <div class="filter-card">
+                            <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Search Student</label>
+                                    <input type="text" id="stu-search-input" class="form-control" placeholder="Search by name, ID, or email..." style="width: 100%;">
+                                </div>
+                                <div style="width: 200px;">
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Department Filter</label>
+                                    <select id="stu-dept-select" class="form-control" style="width: 100%; height: 42px; background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); border-radius: 6px; padding: 0.5rem;"></select>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-primary" id="btn-filter-students"><i class="fa-solid fa-filter"></i> Apply Filters</button>
+                                    <button class="btn btn-outline" id="btn-export-students-csv"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+                                    <button class="btn btn-secondary" id="btn-export-students-pdf"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glassmorphism" style="padding: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h4 style="font-weight: 700; color: var(--accent-gold);">Filtered Student Roster</h4>
+                                <span id="stu-count-badge" class="badge badge-primary">0 Students</span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Student ID</th>
+                                            <th>Student Name</th>
+                                            <th>Department</th>
+                                            <th>Degree Course</th>
+                                            <th>Email Address</th>
+                                            <th>Gender</th>
+                                            <th>Date of Birth</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbl-students-report-body">
+                                        <tr><td colspan="7" class="text-center text-muted">Loading student directory...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Report 2: Attendance Report -->
+                    <div id="tab-attendance-report" class="report-tab-content hidden">
+                        <div class="filter-card">
+                            <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+                                <div style="flex: 1; min-width: 160px;">
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Student ID / Name</label>
+                                    <input type="text" id="att-search-input" class="form-control" placeholder="Search student..." style="width: 100%;">
+                                </div>
+                                <div style="width: 160px;">
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Department</label>
+                                    <select id="att-dept-select" class="form-control" style="width: 100%; height: 42px; background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); border-radius: 6px; padding: 0.5rem;"></select>
+                                </div>
+                                <div style="width: 130px;">
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Status</label>
+                                    <select id="att-status-select" class="form-control" style="width: 100%; height: 42px; background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); border-radius: 6px; padding: 0.5rem;">
+                                        <option value="">All Statuses</option>
+                                        <option value="Present">Present</option>
+                                        <option value="Absent">Absent</option>
+                                    </select>
+                                </div>
+                                <div style="width: 150px;">
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Record Date</label>
+                                    <input type="date" id="att-date-input" class="form-control" style="width: 100%;">
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-primary" id="btn-filter-attendance"><i class="fa-solid fa-filter"></i> Filter</button>
+                                    <button class="btn btn-outline" id="btn-export-attendance-csv"><i class="fa-solid fa-file-csv"></i> CSV</button>
+                                    <button class="btn btn-secondary" id="btn-export-attendance-pdf"><i class="fa-solid fa-file-pdf"></i> PDF Report</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glassmorphism" style="padding: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h4 style="font-weight: 700; color: var(--accent-gold);">Attendance Logs & Records</h4>
+                                <span id="att-count-badge" class="badge badge-primary">0 Records</span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Log ID</th>
+                                            <th>Student ID</th>
+                                            <th>Student Name</th>
+                                            <th>Department</th>
+                                            <th>Subject Code</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbl-attendance-report-body">
+                                        <tr><td colspan="7" class="text-center text-muted">Loading attendance report...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Report 3: Marks / Results Report -->
+                    <div id="tab-results-report" class="report-tab-content hidden">
+                        <div class="filter-card">
+                            <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+                                <div style="flex: 1; min-width: 160px;">
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Student ID / Name</label>
+                                    <input type="text" id="res-search-input" class="form-control" placeholder="Search student..." style="width: 100%;">
+                                </div>
+                                <div style="width: 160px;">
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Department</label>
+                                    <select id="res-dept-select" class="form-control" style="width: 100%; height: 42px; background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); border-radius: 6px; padding: 0.5rem;"></select>
+                                </div>
+                                <div style="width: 140px;">
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Pass / Fail Status</label>
+                                    <select id="res-status-select" class="form-control" style="width: 100%; height: 42px; background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); border-radius: 6px; padding: 0.5rem;">
+                                        <option value="">All Statuses</option>
+                                        <option value="PASS">PASS</option>
+                                        <option value="FAIL">FAIL</option>
+                                    </select>
+                                </div>
+                                <div style="width: 120px;">
+                                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Grade</label>
+                                    <select id="res-grade-select" class="form-control" style="width: 100%; height: 42px; background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); border-radius: 6px; padding: 0.5rem;">
+                                        <option value="">All Grades</option>
+                                        <option value="A+">A+</option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                        <option value="F">F</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-primary" id="btn-filter-results"><i class="fa-solid fa-filter"></i> Filter</button>
+                                    <button class="btn btn-outline" id="btn-export-results-csv"><i class="fa-solid fa-file-csv"></i> CSV</button>
+                                    <button class="btn btn-secondary" id="btn-export-results-pdf"><i class="fa-solid fa-file-pdf"></i> PDF Transcript</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glassmorphism" style="padding: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h4 style="font-weight: 700; color: var(--accent-gold);">Examination Results Ledger</h4>
+                                <span id="res-count-badge" class="badge badge-primary">0 Entries</span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Student ID</th>
+                                            <th>Student Name</th>
+                                            <th>Department</th>
+                                            <th>Exam Title / Subject</th>
+                                            <th>Obtained / Max</th>
+                                            <th>Percentage</th>
+                                            <th>Grade</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbl-results-report-body">
+                                        <tr><td colspan="8" class="text-center text-muted">Loading marks report...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Report 4: Teaching Feedback -->
+                    <div id="tab-feedback-report" class="report-tab-content hidden">
+                        <div class="glassmorphism" style="padding: 1.5rem;">
+                            <h4 style="font-weight: 700; color: var(--accent-gold); margin-bottom: 1rem;">Teaching-Learning Feedback Report</h4>
+                            <div class="table-responsive">
+                                <table class="data-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Student ID</th>
+                                            <th>Student Name</th>
+                                            <th>Faculty Name</th>
+                                            <th>Subject</th>
+                                            <th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Q5</th>
+                                            <th>Comments</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="feedback-report-body">
+                                        <tr><td colspan="11" class="text-center text-muted">Loading feedback logs...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/reports.js"></script>
+</body>
+</html>

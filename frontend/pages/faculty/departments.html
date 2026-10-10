@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Institutional Departments</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section class="dashboard-view" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    
+                    <!-- Admin section: Add Department Form -->
+                    <div id="admin-add-section" class="glassmorphism hidden" style="padding: 1.5rem;">
+                        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-gold); margin-bottom: 1rem;">
+                            <i class="fa-solid fa-plus-circle"></i> Add New Institutional Department
+                        </h3>
+                        <form id="add-dept-form" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+                            <div class="form-group" style="flex: 1; min-width: 250px;">
+                                <label for="new-dept-name" style="margin-bottom: 6px; display: block; font-size: 0.8rem; color: var(--text-muted);">Department Name</label>
+                                <input type="text" id="new-dept-name" placeholder="e.g. Civil Engineering" required class="form-control" style="width: 100%; height: 42px; background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem 1rem;">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="height: 42px;">
+                                <i class="fa-solid fa-plus"></i> Create Department
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Department List Section -->
+                    <div class="glassmorphism" style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div>
+                            <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--text-main);">Active Departments</h2>
+                            <p class="text-muted" style="font-size: 0.85rem; margin-top: 2px;">Departments directory & enrollment details</p>
+                        </div>
+                        
+                        <!-- Cards Grid -->
+                        <div id="departments-list-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                            <!-- Dynamically loaded -->
+                            <div class="empty-category-notice glassmorphism" style="grid-column: span 3; padding: 2rem; text-align: center; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem;"></i><br>Loading departments...
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/departments.js"></script>
+</body>
+</html>

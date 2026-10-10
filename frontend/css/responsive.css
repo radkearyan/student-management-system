@@ -1,0 +1,90 @@
+/* Responsive Layout overrides and media queries */
+
+@media (max-width: 768px) {
+    .app-layout {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100% !important;
+        height: auto !important;
+        position: relative !important;
+        border-right: none !important;
+        border-bottom: 1px solid var(--glass-border);
+    }
+    
+    .main-content {
+        padding: 1rem !important;
+    }
+
+    .form-group-row {
+        flex-direction: column;
+        gap: 0.85rem;
+    }
+
+    .modal-card {
+        max-width: 100% !important;
+        margin: 0.5rem;
+    }
+
+    .attendance-layout {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Print Friendly Layout Overrides */
+@media print {
+    body, html {
+        background: #ffffff !important;
+        color: #000000 !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+    
+    #app-container, .sidebar, .main-header, .chatbot-floating-trigger, .chatbot-window, #toast-container, .no-print {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    body * {
+        visibility: hidden;
+    }
+    
+    .print-modal-card {
+        display: block !important;
+        visibility: visible !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        background: white !important;
+        color: black !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .print-friendly-content, .print-friendly-content * {
+        visibility: visible !important;
+        color: #000000 !important;
+    }
+    
+    .print-friendly-content {
+        width: 100% !important;
+        background: #ffffff !important;
+        padding: 0 !important;
+    }
+
+    .modal-wrapper {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        background: white !important;
+        display: block !important;
+        z-index: 9999999 !important;
+    }
+}

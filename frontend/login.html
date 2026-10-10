@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Portal Sign In</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="dark-theme">
+    <!-- Login Screen -->
+    <div id="login-container" class="login-wrapper-split">
+        <!-- Left Showcase Side -->
+        <div class="login-showcase-panel">
+            <div class="showcase-overlay"></div>
+            <div class="showcase-content">
+                <div class="showcase-header">
+                    <div class="brand-logo-white"
+                        style="display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--accent-gold); margin-bottom: 0.5rem; background: rgba(255,255,255,0.05);">
+                        <i class="fa-solid fa-graduation-cap" style="font-size: 2rem; color: var(--accent-gold);"></i>
+                    </div>
+                    <div class="showcase-title">
+                        <h2>STUDENT MANAGEMENT SYSTEM</h2>
+                    </div>
+                </div>
+                <div class="showcase-info">
+                    <h1>Student & Academic Management Portal</h1>
+                    <p>Welcome to the Student Management System Portal. Access your grades, verify your classroom
+                        attendance, and get personalized recommendations from the Academic AI Advisor.</p>
+                </div>
+                <div class="showcase-features">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-chart-line"></i></div>
+                        <div class="feature-text">
+                            <h4>Academic Performance Analytics</h4>
+                            <p>Real-time tracking of assessment grades, marks, and progress charts.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                        <div class="feature-text">
+                            <h4>Class Attendance Registry</h4>
+                            <p>Monitor your classroom presence, percentage rates, and indicators.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-brain"></i></div>
+                        <div class="feature-text">
+                            <h4>Academic AI Advisor</h4>
+                            <p>Personalized performance index predictions and action plans.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-footer">
+                    <p>&copy; Student Management System. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Right Form Side -->
+        <div class="login-form-panel">
+            <div class="login-card-professional">
+                <div class="login-brand-mobile"
+                    style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-graduation-cap" style="font-size: 2.5rem; color: var(--accent-gold);"></i>
+                    <h3>STUDENT MANAGEMENT SYSTEM</h3>
+                </div>
+
+                <form id="login-form">
+                    <div class="login-header-professional">
+                        <h2>Welcome Back</h2>
+                        <p>Sign in to access your student or teacher workspace</p>
+
+
+                    </div>
+                    <div class="form-group">
+                        <label for="login-username"><i class="fa-solid fa-user"></i> Username</label>
+                        <input type="text" id="login-username" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
+                        <div class="password-wrapper"
+                            style="position: relative; display: flex; align-items: center; width: 100%;">
+                            <input type="password" id="login-password" placeholder="Enter password" required
+                                style="padding-right: 42px; width: 100%;">
+                            <i class="fa-solid fa-eye toggle-password-btn" id="toggle-login-password"
+                                style="position: absolute; right: 12px; cursor: pointer; color: #64748b; font-size: 1rem; padding: 4px;"
+                                title="Show/Hide Password"></i>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-3">
+                        <span>Sign In</span> <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    </button>
+                    <div class="auth-toggle-link">
+                        <span>Don't have an account yet?</span>
+                        <a href="#" id="go-to-signup">Sign Up</a>
+                    </div>
+                </form>
+
+                <form id="signup-form" class="hidden">
+                    <div class="login-header-professional">
+                        <h2>Create Account</h2>
+                        <p>Register a student or teacher profile on the portal</p>
+                    </div>
+                    <div class="signup-scroll-area">
+                        <div class="form-group">
+                            <label for="signup-role"><i class="fa-solid fa-user-gear"></i> Role</label>
+                            <select id="signup-role" required style="width: 100%;">
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-name"><i class="fa-solid fa-user-tag"></i> Full Name</label>
+                            <input type="text" id="signup-name" placeholder="Enter full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-email"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                            <input type="email" id="signup-email" placeholder="email@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-phone"><i class="fa-solid fa-phone"></i> Phone Number</label>
+                            <input type="tel" id="signup-phone" placeholder="+91 XXXXX XXXXX" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-department"><i class="fa-solid fa-building"></i> Department</label>
+                            <select id="signup-department" required style="width: 100%;">
+                                <option value="Computer Engineering">Computer Engineering</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electrical Engineering">Electrical Engineering</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            </select>
+                        </div>
+
+                        <!-- Student specific fields -->
+                        <div id="signup-student-fields">
+                            <div class="form-group">
+                                <label for="signup-student-id"><i class="fa-solid fa-id-card"></i> Student ID</label>
+                                <input type="text" id="signup-student-id" placeholder="e.g. STU011" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="signup-course"><i class="fa-solid fa-book"></i> Course</label>
+                                <input type="text" id="signup-course" placeholder="e.g. B.Tech Computer Engineering"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="signup-dob"><i class="fa-solid fa-calendar"></i> Date of Birth</label>
+                                <input type="date" id="signup-dob" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="signup-gender"><i class="fa-solid fa-venus-mars"></i> Gender</label>
+                                <select id="signup-gender" style="width: 100%;">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signup-password"><i class="fa-solid fa-lock"></i> Password</label>
+                            <div class="password-wrapper"
+                                style="position: relative; display: flex; align-items: center; width: 100%;">
+                                <input type="password" id="signup-password" placeholder="Create password" required
+                                    style="padding-right: 42px; width: 100%;">
+                                <i class="fa-solid fa-eye toggle-password-btn" id="toggle-signup-password"
+                                    style="position: absolute; right: 12px; cursor: pointer; color: #64748b; font-size: 1rem; padding: 4px;"
+                                    title="Show/Hide Password"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block mt-3">Register</button>
+
+                    <div class="auth-toggle-link">
+                        <span>Already registered?</span>
+                        <a href="#" id="go-to-signin">Return to Sign In</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Redirect if already logged in
+            await redirectIfSessionActive();
+
+            // Password Show/Hide Toggle Setup
+            function setupPasswordToggle(toggleId, inputId) {
+                const toggleBtn = document.getElementById(toggleId);
+                const inputField = document.getElementById(inputId);
+                if (toggleBtn && inputField) {
+                    toggleBtn.addEventListener('click', () => {
+                        const isPassword = inputField.getAttribute('type') === 'password';
+                        inputField.setAttribute('type', isPassword ? 'text' : 'password');
+                        toggleBtn.classList.toggle('fa-eye', !isPassword);
+                        toggleBtn.classList.toggle('fa-eye-slash', isPassword);
+                    });
+                }
+            }
+            setupPasswordToggle('toggle-login-password', 'login-password');
+            setupPasswordToggle('toggle-signup-password', 'signup-password');
+
+
+            // Wire signin submit
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value.trim();
+                const password = document.getElementById('login-password').value;
+
+                const res = await API.post('/api/auth/login', { username, password });
+                if (res && res.success) {
+                    STATE.user = res.user;
+                    showToast("Welcome Back!", `Signed in successfully as ${res.user.role}.`, "success");
+                    setTimeout(() => {
+                        window.location.href = `/pages/${getRolePath(res.user.role)}/dashboard.html`;
+                    }, 1000);
+                } else {
+                    showToast("Sign In Failed", res.message || "Invalid credentials.", "error");
+                }
+            });
+
+            // Wire signup view toggling
+            document.getElementById('go-to-signup').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('signup-form').classList.remove('hidden');
+            });
+
+            document.getElementById('go-to-signin').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('signup-form').classList.add('hidden');
+                document.getElementById('login-form').classList.remove('hidden');
+            });
+
+            // Load departments dynamically for signup
+            async function loadSignupDepartments() {
+                try {
+                    const depts = await API.get('/api/departments');
+                    const deptSelect = document.getElementById('signup-department');
+                    if (depts && deptSelect) {
+                        deptSelect.innerHTML = '';
+                        depts.forEach(d => {
+                            const opt = document.createElement('option');
+                            opt.value = d.name;
+                            opt.textContent = d.name;
+                            deptSelect.appendChild(opt);
+                        });
+                    }
+                } catch (err) {
+                    console.error("Could not load departments list", err);
+                }
+            }
+            loadSignupDepartments();
+
+            // Toggle student fields in signup based on role selection
+            document.getElementById('signup-role').addEventListener('change', (e) => {
+                const isStudent = e.target.value === 'student';
+                const studentSection = document.getElementById('signup-student-fields');
+                if (isStudent) {
+                    studentSection.classList.remove('hidden');
+                    studentSection.querySelectorAll('input, select').forEach(i => i.setAttribute('required', 'required'));
+                } else {
+                    studentSection.classList.add('hidden');
+                    studentSection.querySelectorAll('input, select').forEach(i => i.removeAttribute('required'));
+                }
+            });
+
+            // Wire signup form submit
+            document.getElementById('signup-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const role = document.getElementById('signup-role').value;
+                const name = document.getElementById('signup-name').value;
+                const email = document.getElementById('signup-email').value;
+                const phone = document.getElementById('signup-phone').value;
+                const department = document.getElementById('signup-department').value;
+                const password = document.getElementById('signup-password').value;
+
+                let payload = { role, name, email, phone, department, password };
+
+                if (role === 'student') {
+                    payload.student_id = document.getElementById('signup-student-id').value;
+                    payload.course = document.getElementById('signup-course').value;
+                    payload.dob = document.getElementById('signup-dob').value;
+                    payload.gender = document.getElementById('signup-gender').value;
+                }
+
+                const res = await API.post('/api/auth/signup', payload);
+                if (res && res.success) {
+                    showToast("Registered", res.message, "success");
+                    document.getElementById('go-to-signin').click();
+                } else {
+                    showToast("Registration Failed", res.message || "Unknown error", "error");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

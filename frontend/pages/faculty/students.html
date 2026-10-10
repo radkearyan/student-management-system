@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Students Registry</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section id="view-students" class="dashboard-view">
+                    <!-- Department Categorization Cards -->
+                    <div class="department-category-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem;">
+                        <div class="dept-cat-card glassmorphism" data-dept="Computer Engineering" style="cursor: pointer; padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+                            <div class="dept-cat-icon" style="font-size: 1.8rem; color: var(--accent-blue);"><i class="fa-solid fa-laptop-code"></i></div>
+                            <div class="dept-cat-info">
+                                <h4>Computer Engg</h4>
+                                <span class="dept-student-count" id="count-dept-computer">0 Students</span>
+                            </div>
+                        </div>
+                        <div class="dept-cat-card glassmorphism" data-dept="Information Technology" style="cursor: pointer; padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+                            <div class="dept-cat-icon" style="font-size: 1.8rem; color: var(--accent-gold);"><i class="fa-solid fa-network-wired"></i></div>
+                            <div class="dept-cat-info">
+                                <h4>Information Tech</h4>
+                                <span class="dept-student-count" id="count-dept-it">0 Students</span>
+                            </div>
+                        </div>
+                        <div class="dept-cat-card glassmorphism" data-dept="Electrical Engineering" style="cursor: pointer; padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+                            <div class="dept-cat-icon" style="font-size: 1.8rem; color: var(--success);"><i class="fa-solid fa-bolt"></i></div>
+                            <div class="dept-cat-info">
+                                <h4>Electrical Engg</h4>
+                                <span class="dept-student-count" id="count-dept-electrical">0 Students</span>
+                            </div>
+                        </div>
+                        <div class="dept-cat-card glassmorphism" data-dept="Mechanical Engineering" style="cursor: pointer; padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+                            <div class="dept-cat-icon" style="font-size: 1.8rem; color: #8b5cf6;"><i class="fa-solid fa-gears"></i></div>
+                            <div class="dept-cat-info">
+                                <h4>Mechanical Engg</h4>
+                                <span class="dept-student-count" id="count-dept-mechanical">0 Students</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filters Bar -->
+                    <div class="action-bar-row" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 1rem;">
+                        <div class="search-box" style="display: flex; align-items: center; gap: 8px; flex: 1; max-width: 450px; background: rgba(0,0,0,0.15); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 8px;">
+                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                            <input type="text" id="student-search-input" placeholder="Search student by name or ID..." style="background: transparent; border: none; outline: none; width: 100%; color: var(--text-main);">
+                        </div>
+                        <div class="filters-row" style="display: flex; gap: 0.75rem;">
+                            <select id="student-dept-filter" class="form-control" style="background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 8px; outline: none;">
+                                <option value="">All Departments</option>
+                                <option value="Computer Engineering">Computer Engineering</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electrical Engineering">Electrical Engineering</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            </select>
+                            <button class="btn btn-primary" id="btn-open-add-student-modal">
+                                <i class="fa-solid fa-plus"></i> Add Student
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Grouped Categorized Lists Container -->
+                    <div id="students-grouped-container" style="margin-top: 1rem;">
+                        <div class="empty-category-notice glassmorphism" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem;"></i><br>Loading student categories...
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: Enroll Student -->
+    <div id="add-student-modal" class="modal-wrapper hidden">
+        <div class="modal-card glassmorphism">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-plus" style="color: var(--accent-blue);"></i> Enroll New Student</h3>
+                <button class="modal-close-btn" id="btn-close-student-modal" aria-label="Close modal">&times;</button>
+            </div>
+            <form id="add-student-form">
+                <div class="form-group">
+                    <label for="stu-id"><i class="fa-solid fa-id-badge"></i> Student ID (Unique)</label>
+                    <input type="text" id="stu-id" placeholder="e.g. STU011" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="stu-name"><i class="fa-solid fa-user"></i> Full Name</label>
+                    <input type="text" id="stu-name" placeholder="John Doe" required autocomplete="name">
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group col">
+                        <label for="stu-dob"><i class="fa-solid fa-calendar-days"></i> Date of Birth</label>
+                        <input type="date" id="stu-dob" required>
+                    </div>
+                    <div class="form-group col">
+                        <label for="stu-gender"><i class="fa-solid fa-venus-mars"></i> Gender</label>
+                        <select id="stu-gender" required>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group col">
+                        <label for="stu-email"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                        <input type="email" id="stu-email" placeholder="john.doe@example.com" required autocomplete="email">
+                    </div>
+                    <div class="form-group col">
+                        <label for="stu-phone"><i class="fa-solid fa-phone"></i> Phone Number</label>
+                        <input type="tel" id="stu-phone" placeholder="+91 98765 43210" required autocomplete="tel">
+                    </div>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group col">
+                        <label for="stu-dept"><i class="fa-solid fa-building-columns"></i> Department</label>
+                        <select id="stu-dept" required>
+                            <option value="Computer Engineering">Computer Engineering</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Electrical Engineering">Electrical Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        </select>
+                    </div>
+                    <div class="form-group col">
+                        <label for="stu-course"><i class="fa-solid fa-graduation-cap"></i> Course Plan</label>
+                        <input type="text" id="stu-course" placeholder="e.g. B.Tech Computer Engineering" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="btn-cancel-student-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Enroll Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Student Details & AI Performance Analytics -->
+    <div id="student-details-modal" class="modal-wrapper hidden">
+        <div class="modal-card modal-large glassmorphism">
+            <div class="modal-header">
+                <h3 id="det-student-name">Student Information</h3>
+                <button class="modal-close-btn" id="btn-close-details-modal">&times;</button>
+            </div>
+            <div class="modal-body-large">
+                <!-- Tabs -->
+                <div class="details-modal-tabs" style="display:flex; border-bottom:1px solid var(--glass-border); gap:8px; margin-bottom:1.5rem;">
+                    <button class="detail-tab-btn active btn btn-outline" data-detail-tab="profile-tab"><i class="fa-solid fa-address-card"></i> Student Profile</button>
+                    <button class="detail-tab-btn btn btn-outline" data-detail-tab="ai-tab"><i class="fa-solid fa-brain"></i> AI Performance</button>
+                    <button class="detail-tab-btn btn btn-outline" data-detail-tab="grades-tab"><i class="fa-solid fa-star"></i> Academic Grades</button>
+                    <button class="detail-tab-btn btn btn-outline" data-detail-tab="id-card-tab"><i class="fa-solid fa-id-card"></i> Student ID Badge</button>
+                </div>
+
+                <!-- Tab content: Profile -->
+                <div id="profile-tab" class="detail-tab-content active">
+                    <div class="profile-tab-wrapper" style="display: grid; grid-template-columns: 1fr 2.5fr; gap: 2rem;">
+                        <!-- Avatar Section (Left) -->
+                        <div class="profile-avatar-section" style="display:flex; flex-direction:column; align-items:center; border-right:1px solid var(--glass-border); padding-right:1.5rem;">
+                            <div class="profile-avatar-container" id="btn-change-avatar" title="Click to Change Profile Picture" style="width:140px; height:140px; border-radius:50%; border:3px solid var(--accent-gold); position:relative; overflow:hidden; cursor:pointer;">
+                                <img id="det-avatar-img" class="hidden" src="" alt="Avatar" style="width:100%; height:100%; object-fit:cover;">
+                                <div id="det-avatar-fallback" class="avatar-fallback" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:3.5rem; font-weight:800; background:rgba(255,255,255,0.05); color:var(--accent-gold);">S</div>
+                                <div class="profile-avatar-overlay" style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); padding:4px 0; text-align:center; font-size:0.65rem; color:white; opacity:0; transition:opacity 0.2s;">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <span>Upload Photo</span>
+                                </div>
+                            </div>
+                            <input type="file" id="profile-pic-input" accept="image/*" class="hidden">
+                            <h4 id="det-avatar-name" style="margin-top: 0.75rem; font-weight: 700; font-size:1.1rem;">Student Name</h4>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);" id="det-avatar-role">B.Tech Student</span>
+                        </div>
+
+                        <!-- Details Section (Right) -->
+                        <div class="profile-details-section" style="display:flex; flex-direction:column; gap:1.5rem;">
+                            <div class="profile-section-card">
+                                <div class="profile-section-title" style="border-bottom:1px solid var(--glass-border); padding-bottom:0.5rem; margin-bottom:1rem; font-weight:700; font-size:1rem; color:var(--accent-gold);">
+                                    <i class="fa-solid fa-graduation-cap"></i> Academic Records
+                                </div>
+                                <div class="profile-info-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.85rem;">
+                                    <div class="info-field">
+                                        <span class="info-label" style="color:var(--text-muted); display:block;">Student ID:</span>
+                                        <span class="info-val" id="det-id" style="font-weight:600;">STU001</span>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="info-label" style="color:var(--text-muted); display:block;">Department:</span>
+                                        <span class="info-val" id="det-dept" style="font-weight:600;">Computer Science</span>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="info-label" style="color:var(--text-muted); display:block;">Degree Course:</span>
+                                        <span class="info-val" id="det-course" style="font-weight:600;">B.Tech CSE</span>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="info-label" style="color:var(--text-muted); display:block;">Date of Birth:</span>
+                                        <span class="info-val" id="det-dob" style="font-weight:600;">2005-04-12</span>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="info-label" style="color:var(--text-muted); display:block;">Gender:</span>
+                                        <span class="info-val" id="det-gender" style="font-weight:600;">Female</span>
+                                    </div>
+                                    <div class="info-field">
+                                        <span class="info-label" style="color:var(--text-muted); display:block;">Email Address:</span>
+                                        <span class="info-val" id="det-email" style="font-weight:600;">alice.johnson@example.com</span>
+                                    </div>
+                                    <div class="info-field" style="grid-column:span 2;">
+                                        <span class="info-label" style="color:var(--text-muted); display:block;">Phone:</span>
+                                        <span class="info-val" id="det-phone" style="font-weight:600;">+91-9096081200</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profile-section-card">
+                                <div class="profile-section-title" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:0.5rem; margin-bottom:1rem; font-weight:700; font-size:1rem; color:var(--accent-gold);">
+                                    <span><i class="fa-solid fa-address-card"></i> Personal Profile & Bio</span>
+                                    <button class="btn btn-outline" id="btn-edit-extra-info" style="font-size: 0.75rem; padding: 4px 10px;"><i class="fa-solid fa-pen-to-square"></i> Edit Info</button>
+                                </div>
+                                
+                                <div id="extra-info-display" class="extra-info-display-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.85rem;">
+                                    <div class="extra-info-field" style="grid-column:span 2;">
+                                        <span class="extra-info-label" style="color:var(--text-muted); display:block;">Biography / About Me</span>
+                                        <span class="extra-info-val" id="det-bio">No bio added yet.</span>
+                                    </div>
+                                    <div class="extra-info-field" style="grid-column:span 2;">
+                                        <span class="extra-info-label" style="color:var(--text-muted); display:block;">Key Skills / Interests</span>
+                                        <span class="extra-info-val" id="det-skills">Not specified</span>
+                                    </div>
+                                    <div class="extra-info-field" style="grid-column:span 2;">
+                                        <span class="extra-info-label" style="color:var(--text-muted); display:block;">Key Achievements</span>
+                                        <span class="extra-info-val" id="det-achievements">None listed</span>
+                                    </div>
+                                    <div class="extra-info-field">
+                                        <span class="extra-info-label" style="color:var(--text-muted); display:block;">Blood Group</span>
+                                        <span class="extra-info-val" id="det-blood-group">Not specified</span>
+                                    </div>
+                                    <div class="extra-info-field">
+                                        <span class="extra-info-label" style="color:var(--text-muted); display:block;">Emergency Contact</span>
+                                        <span class="extra-info-val" id="det-emergency-contact">Not specified</span>
+                                    </div>
+                                    <div class="extra-info-field" style="grid-column:span 2;">
+                                        <span class="extra-info-label" style="color:var(--text-muted); display:block;">Residential Address</span>
+                                        <span class="extra-info-val" id="det-address">No address provided</span>
+                                    </div>
+                                </div>
+
+                                <form id="extra-info-form" class="extra-info-form hidden" style="display:flex; flex-direction:column; gap:10px; font-size:0.85rem;">
+                                    <div class="form-group">
+                                        <label for="edit-bio">Biography / About Me</label>
+                                        <textarea id="edit-bio" class="form-control" placeholder="Tell us about yourself..."></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="edit-skills">Key Skills / Interests</label>
+                                        <input type="text" id="edit-skills" class="form-control" placeholder="e.g. Java, Python, Web Development">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="edit-achievements">Key Achievements</label>
+                                        <textarea id="edit-achievements" class="form-control" placeholder="e.g. Hackathon winner"></textarea>
+                                    </div>
+                                    <div class="form-group-row">
+                                        <div class="form-group col">
+                                            <label for="edit-blood-group">Blood Group</label>
+                                            <input type="text" id="edit-blood-group" class="form-control" placeholder="e.g. O+, AB-">
+                                        </div>
+                                        <div class="form-group col">
+                                            <label for="edit-emergency-contact">Emergency Contact Phone</label>
+                                            <input type="text" id="edit-emergency-contact" class="form-control" placeholder="e.g. +91 XXXXX XXXXX">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="edit-address">Residential Address</label>
+                                        <textarea id="edit-address" class="form-control" placeholder="Enter your full postal address..."></textarea>
+                                    </div>
+                                    <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 1rem;">
+                                        <button type="button" class="btn btn-outline" id="btn-cancel-extra-info">Cancel</button>
+                                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Details</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab content: AI Analysis -->
+                <div id="ai-tab" class="detail-tab-content hidden">
+                    <div class="ai-analytics-layout" style="display:flex; flex-direction:column; gap:1.25rem;">
+                        <div class="ai-stats-row" style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+                            <div class="ai-stat-gauge glassmorphism" style="padding:1.5rem; text-align:center;">
+                                <h4>AI Performance Score</h4>
+                                <div class="gauge-display-container" style="font-size:2.5rem; font-weight:800; margin:1rem 0; color:var(--accent-blue);">
+                                    <span id="ai-gauge-val">0</span><span class="gauge-scale" style="font-size:1rem; color:var(--text-muted);">/ 100</span>
+                                </div>
+                            </div>
+                            <div class="ai-stat-risk-card glassmorphism" id="ai-risk-status-container" style="padding:1.5rem; text-align:center;">
+                                <h4>AI Risk Classification</h4>
+                                <div class="risk-badge-display" id="ai-risk-badge" style="font-size:1.5rem; font-weight:800; margin-top:1.5rem; text-transform:uppercase;">Calculating...</div>
+                            </div>
+                        </div>
+
+                        <div class="ai-model-confidence glassmorphism mt-3" style="padding:1.5rem;">
+                            <h4 style="margin-bottom:1rem;">ML Classifier Confidence Intervals</h4>
+                            <div class="confidence-bars-list" id="ai-confidence-bars" style="display:flex; flex-direction:column; gap:10px;"></div>
+                        </div>
+
+                        <div class="ai-recommendation-box mt-3" id="ai-recommendation-container" style="background:rgba(245, 158, 11, 0.15); border:1px dashed var(--accent-gold); padding:1rem; border-radius:10px; display:flex; gap:1rem; align-items:flex-start;">
+                            <div class="box-icon" style="font-size:1.5rem; color:var(--accent-gold);"><i class="fa-solid fa-lightbulb"></i></div>
+                            <div class="box-content">
+                                <h4 style="font-weight:700; margin-bottom:4px;">AI Personalized Action Plan</h4>
+                                <p id="ai-recommendation-text" style="font-size:0.85rem; line-height:1.4;">Analyzing academic history...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab content: Grades -->
+                <div id="grades-tab" class="detail-tab-content hidden">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Assessment / Exam</th>
+                                    <th>Subject</th>
+                                    <th>Marks Obtained</th>
+                                    <th>Max Marks</th>
+                                    <th>Grade</th>
+                                    <th>Exam Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="det-grades-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab content: ID Card Badge -->
+                <div id="id-card-tab" class="detail-tab-content hidden flex-center" style="padding: 1.5rem; background: rgba(0,0,0,0.3); display:flex; justify-content:center;">
+                    <div class="student-id-card-visual" id="id-card-element">
+                        <div class="id-card-header">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <h4>STUDENT MANAGEMENT SYSTEM</h4>
+                        </div>
+                        <div class="id-card-avatar flex-center">
+                            <i class="fa-solid fa-user" id="id-card-avatar-icon"></i>
+                            <img id="id-card-avatar-img" class="hidden" src="" alt="Badge Avatar">
+                        </div>
+                        <h3 id="id-card-name">Student Name</h3>
+                        <div class="id-card-role">B.Tech Student</div>
+                        <div class="id-card-details">
+                            <div>ID No: <strong id="id-card-id-val">STU001</strong></div>
+                            <div>Dept: <strong id="id-card-dept-val">Comp Engg</strong></div>
+                            <div>Phone: <strong id="id-card-phone-val">+91-9096081200</strong></div>
+                        </div>
+                        <div class="id-card-footer">
+                            <i class="fa-solid fa-barcode"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="btn-close-details-modal-footer">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/students.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const authOk = await checkAuth(['admin', 'teacher']);
+            if (authOk) {
+                // Set titles
+                document.getElementById('header-view-title').textContent = "Students Registry";
+                document.getElementById('header-view-subtitle').textContent = "Detailed record profiles & analytics";
+                
+                // Load Registry listings
+                loadStudentsRegistry();
+            }
+        });
+    </script>
+</body>
+</html>

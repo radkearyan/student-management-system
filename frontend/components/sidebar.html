@@ -1,0 +1,87 @@
+<div class="sidebar-header" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
+    <div class="sidebar-brand" style="display: flex; align-items: center; gap: 12px; overflow: hidden;">
+        <div class="brand-logo-container" style="width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent-gold);">
+            <i class="fa-solid fa-graduation-cap" style="font-size: 1.4rem; color: var(--accent-gold);"></i>
+        </div>
+        <div class="brand-text">
+            <h3 style="color: #fff; font-size: 0.95rem; font-weight: 800; line-height: 1.1; margin: 0; letter-spacing: 0.5px;">SMS PORTAL</h3>
+            <span style="font-size: 0.72rem; color: var(--accent-gold); font-weight: 600; text-transform: uppercase;">Academic ERP</span>
+        </div>
+    </div>
+    <button id="sidebar-collapse-btn" class="sidebar-toggle-btn" title="Toggle Sidebar Collapse" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+        <i class="fa-solid fa-angles-left"></i>
+    </button>
+</div>
+
+<nav class="sidebar-nav" style="padding: 1rem 0;">
+    <div class="nav-section-title" style="padding: 0.5rem 1.25rem; font-size: 0.68rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Main Menu</div>
+    <ul>
+        <li class="nav-item" data-view="dashboard">
+            <a href="dashboard.html" title="Dashboard Overview"><i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span></a>
+        </li>
+        <li class="nav-item" id="nav-profile-item">
+            <a href="profile.html" title="My Profile"><i class="fa-solid fa-user-gear"></i> <span>My Profile</span></a>
+        </li>
+    </ul>
+
+    <div class="nav-section-title" style="padding: 0.75rem 1.25rem 0.5rem; font-size: 0.68rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Academics</div>
+    <ul>
+        <li class="nav-item" data-view="students" data-roles="admin,teacher">
+            <a href="students.html" title="Students Registry">
+                <i class="fa-solid fa-user-graduate"></i> 
+                <span>Students Registry</span>
+                <span class="nav-badge badge-blue" id="sidebar-badge-students">...</span>
+            </a>
+        </li>
+        <li class="nav-item" data-view="faculty" data-roles="admin,teacher">
+            <a href="faculty.html" title="Faculty Directory"><i class="fa-solid fa-chalkboard-user"></i> <span>Faculty Directory</span></a>
+        </li>
+        <li class="nav-item" data-view="subjects" data-roles="admin,teacher,student">
+            <a href="subjects.html" title="Subjects Registry"><i class="fa-solid fa-book-open"></i> <span>Subjects Registry</span></a>
+        </li>
+        <li class="nav-item" data-view="courses" data-roles="admin,teacher,student">
+            <a href="courses.html" title="Courses Plan"><i class="fa-solid fa-graduation-cap"></i> <span>Courses Plan</span></a>
+        </li>
+        <li class="nav-item" data-view="departments" data-roles="admin,teacher">
+            <a href="departments.html" title="Departments"><i class="fa-solid fa-building-user"></i> <span>Departments</span></a>
+        </li>
+    </ul>
+
+    <div class="nav-section-title" style="padding: 0.75rem 1.25rem 0.5rem; font-size: 0.68rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Administration</div>
+    <ul>
+        <li class="nav-item" data-view="attendance" data-roles="admin,teacher,student">
+            <a href="attendance.html" title="Class Attendance">
+                <i class="fa-solid fa-calendar-check"></i> 
+                <span>Class Attendance</span>
+                <span class="nav-badge badge-green">Live</span>
+            </a>
+        </li>
+        <li class="nav-item" data-view="exams" data-roles="admin,teacher,student">
+            <a href="examinations.html" title="Examinations & Marks"><i class="fa-solid fa-file-invoice"></i> <span>Examinations</span></a>
+        </li>
+        <li class="nav-item" data-view="fees" data-roles="admin,teacher,student">
+            <a href="fees.html" title="Fees & Payments"><i class="fa-solid fa-wallet"></i> <span>Fees & Payments</span></a>
+        </li>
+        <li class="nav-item" data-view="feedback" data-roles="admin,teacher,student">
+            <a href="reports.html" title="Academic Reports & Analytics"><i class="fa-solid fa-chart-line"></i> <span>Reports & Analytics</span></a>
+        </li>
+    </ul>
+</nav>
+
+<div class="sidebar-footer" style="padding: 0.9rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between;">
+    <div class="user-profile-summary" id="user-summary-click" title="View Profile" style="cursor: pointer; display: flex; align-items: center; gap: 10px; overflow: hidden;">
+        <div class="user-avatar" id="nav-user-avatar" style="width: 34px; height: 34px; border-radius: 50%; background: var(--accent-blue); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0;">A</div>
+        <div class="user-info" style="overflow: hidden;">
+            <h4 id="nav-user-name" style="margin: 0; font-size: 0.82rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Loading...</h4>
+            <span id="nav-user-role" style="font-size: 0.72rem; color: var(--accent-gold); text-transform: capitalize;">Guest</span>
+        </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 4px;">
+        <button id="btn-trigger-change-pw" class="btn-logout-icon" title="Change Password" style="color: var(--accent-gold); background: transparent; border: none; cursor: pointer; padding: 6px; border-radius: 6px;">
+            <i class="fa-solid fa-key"></i>
+        </button>
+        <button id="btn-logout" class="btn-logout-icon" title="Sign Out" style="background: transparent; border: none; cursor: pointer; padding: 6px; color: #ef4444; border-radius: 6px;">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </button>
+    </div>
+</div>

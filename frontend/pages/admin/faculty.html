@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Faculty Registry</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar glassmorphism" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Container -->
+            <header class="main-header glassmorphism" id="header-container"></header>
+
+            <!-- Scrollable Content Body -->
+            <div class="content-body">
+                <section id="view-faculty" class="dashboard-view">
+                    <!-- Department Categorization Cards -->
+                    <div class="department-category-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem;">
+                        <div class="dept-cat-card glassmorphism" data-dept="Computer Engineering" style="cursor: pointer; padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+                            <div class="dept-cat-icon" style="font-size: 1.8rem; color: var(--accent-blue);"><i class="fa-solid fa-laptop-code"></i></div>
+                            <div class="dept-cat-info">
+                                <h4>Computer Engg</h4>
+                                <span class="dept-student-count" id="count-dept-computer">0 Faculty</span>
+                            </div>
+                        </div>
+                        <div class="dept-cat-card glassmorphism" data-dept="Information Technology" style="cursor: pointer; padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+                            <div class="dept-cat-icon" style="font-size: 1.8rem; color: var(--accent-gold);"><i class="fa-solid fa-network-wired"></i></div>
+                            <div class="dept-cat-info">
+                                <h4>Information Tech</h4>
+                                <span class="dept-student-count" id="count-dept-it">0 Faculty</span>
+                            </div>
+                        </div>
+                        <div class="dept-cat-card glassmorphism" data-dept="Electrical Engineering" style="cursor: pointer; padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+                            <div class="dept-cat-icon" style="font-size: 1.8rem; color: var(--success);"><i class="fa-solid fa-bolt"></i></div>
+                            <div class="dept-cat-info">
+                                <h4>Electrical Engg</h4>
+                                <span class="dept-student-count" id="count-dept-electrical">0 Faculty</span>
+                            </div>
+                        </div>
+                        <div class="dept-cat-card glassmorphism" data-dept="Mechanical Engineering" style="cursor: pointer; padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+                            <div class="dept-cat-icon" style="font-size: 1.8rem; color: #8b5cf6;"><i class="fa-solid fa-gears"></i></div>
+                            <div class="dept-cat-info">
+                                <h4>Mechanical Engg</h4>
+                                <span class="dept-student-count" id="count-dept-mechanical">0 Faculty</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filters Bar -->
+                    <div class="action-bar-row" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 1rem;">
+                        <div class="search-box" style="display: flex; align-items: center; gap: 8px; flex: 1; max-width: 450px; background: rgba(0,0,0,0.15); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 8px;">
+                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                            <input type="text" id="faculty-search-input" placeholder="Search faculty by name, code or username..." style="background: transparent; border: none; outline: none; width: 100%; color: var(--text-main);">
+                        </div>
+                        <div class="filters-row" style="display: flex; gap: 0.75rem;">
+                            <select id="faculty-dept-filter" class="form-control" style="background: rgba(0,0,0,0.15); color: var(--text-main); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 8px; outline: none;">
+                                <option value="">All Departments</option>
+                                <option value="Computer Engineering">Computer Engineering</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electrical Engineering">Electrical Engineering</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            </select>
+                            <button class="btn btn-primary" id="btn-open-add-faculty-modal">
+                                <i class="fa-solid fa-user-plus"></i> Add Faculty
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Faculty Data Table Container -->
+                    <div id="faculty-list-container" style="margin-top: 1rem;">
+                        <div class="empty-category-notice glassmorphism" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem;"></i><br>Loading faculty directory...
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: Add Faculty -->
+    <div id="add-faculty-modal" class="modal-wrapper hidden">
+        <div class="modal-card glassmorphism">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-chalkboard-user" style="color: var(--accent-blue);"></i> Add New Faculty Member</h3>
+                <button class="modal-close-btn" id="btn-close-faculty-modal" aria-label="Close modal">&times;</button>
+            </div>
+            <form id="add-faculty-form">
+                <div class="form-group-row">
+                    <div class="form-group col">
+                        <label for="fac-username"><i class="fa-solid fa-at"></i> Username *</label>
+                        <input type="text" id="fac-username" placeholder="e.g. prof_john" required autocomplete="off">
+                    </div>
+                    <div class="form-group col">
+                        <label for="fac-password"><i class="fa-solid fa-key"></i> Initial Password *</label>
+                        <input type="password" id="fac-password" placeholder="••••••••" required>
+                    </div>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group col">
+                        <label for="fac-name"><i class="fa-solid fa-user"></i> Full Name *</label>
+                        <input type="text" id="fac-name" placeholder="Dr. John Smith" required>
+                    </div>
+                    <div class="form-group col">
+                        <label for="fac-ref-id"><i class="fa-solid fa-id-badge"></i> Faculty ID Code</label>
+                        <input type="text" id="fac-ref-id" placeholder="e.g. FAC010 (Auto if blank)">
+                    </div>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group col">
+                        <label for="fac-email"><i class="fa-solid fa-envelope"></i> Email Address *</label>
+                        <input type="email" id="fac-email" placeholder="john.smith@college.edu" required>
+                    </div>
+                    <div class="form-group col">
+                        <label for="fac-phone"><i class="fa-solid fa-phone"></i> Phone Number</label>
+                        <input type="tel" id="fac-phone" placeholder="+91 98765 43210">
+                    </div>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group col">
+                        <label for="fac-dept"><i class="fa-solid fa-building-columns"></i> Department *</label>
+                        <select id="fac-dept" required>
+                            <option value="Computer Engineering">Computer Engineering</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Electrical Engineering">Electrical Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        </select>
+                    </div>
+                    <div class="form-group col">
+                        <label for="fac-designation"><i class="fa-solid fa-briefcase"></i> Designation</label>
+                        <select id="fac-designation">
+                            <option value="Assistant Professor">Assistant Professor</option>
+                            <option value="Associate Professor">Associate Professor</option>
+                            <option value="Professor & HOD">Professor & HOD</option>
+                            <option value="Lecturer">Lecturer</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fac-qualification"><i class="fa-solid fa-graduation-cap"></i> Qualification</label>
+                    <input type="text" id="fac-qualification" placeholder="e.g. Ph.D in Computer Science, M.Tech">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="btn-cancel-faculty-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Faculty</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Edit Faculty -->
+    <div id="edit-faculty-modal" class="modal-wrapper hidden">
+        <div class="modal-card glassmorphism">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-pen" style="color: var(--accent-gold);"></i> Edit Faculty Details</h3>
+                <button class="modal-close-btn" id="btn-close-edit-faculty-modal" aria-label="Close modal">&times;</button>
+            </div>
+            <form id="edit-faculty-form">
+                <input type="hidden" id="edit-fac-user-id">
+                <div class="form-group-row">
+                    <div class="form-group col">
+                        <label for="edit-fac-username"><i class="fa-solid fa-at"></i> Username</label>
+                        <input type="text" id="edit-fac-username" readonly style="opacity: 0.7; cursor: not-allowed;">
+                    </div>
+                    <div class="form-group col">
+                        <label for="edit-fac-name"><i class="fa-solid fa-user"></i> Full Name *</label>
+                        <input type="text" id="edit-fac-name" required>
+                    </div>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group col">
+                        <label for="edit-fac-email"><i class="fa-solid fa-envelope"></i> Email Address *</label>
+                        <input type="email" id="edit-fac-email" required>
+                    </div>
+                    <div class="form-group col">
+                        <label for="edit-fac-phone"><i class="fa-solid fa-phone"></i> Phone Number</label>
+                        <input type="tel" id="edit-fac-phone">
+                    </div>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group col">
+                        <label for="edit-fac-dept"><i class="fa-solid fa-building-columns"></i> Department *</label>
+                        <select id="edit-fac-dept" required>
+                            <option value="Computer Engineering">Computer Engineering</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Electrical Engineering">Electrical Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        </select>
+                    </div>
+                    <div class="form-group col">
+                        <label for="edit-fac-designation"><i class="fa-solid fa-briefcase"></i> Designation</label>
+                        <select id="edit-fac-designation">
+                            <option value="Assistant Professor">Assistant Professor</option>
+                            <option value="Associate Professor">Associate Professor</option>
+                            <option value="Professor & HOD">Professor & HOD</option>
+                            <option value="Lecturer">Lecturer</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-fac-qualification"><i class="fa-solid fa-graduation-cap"></i> Qualification</label>
+                    <input type="text" id="edit-fac-qualification">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="btn-cancel-edit-faculty-modal">Cancel</button>
+                    <button type="submit" class="btn btn-gold"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Faculty Profile & Assigned Subjects -->
+    <div id="faculty-profile-modal" class="modal-wrapper hidden">
+        <div class="modal-card modal-large glassmorphism">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-address-card" style="color: var(--accent-blue);"></i> Faculty Profile</h3>
+                <button class="modal-close-btn" id="btn-close-faculty-profile-modal">&times;</button>
+            </div>
+            <div class="modal-body-large" style="display: flex; flex-direction: column; gap: 1.5rem; padding: 1.5rem;">
+                <div class="profile-header-card" style="display: flex; gap: 1.5rem; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1.25rem;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(99,102,241,0.2); border: 2px solid var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--accent-blue);">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <div>
+                        <h2 id="det-fac-name" style="margin-bottom: 4px;">Faculty Name</h2>
+                        <div style="display: flex; gap: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            <span id="det-fac-username">@username</span> |
+                            <span id="det-fac-designation" style="color: var(--accent-gold); font-weight: 600;">Assistant Professor</span> |
+                            <span id="det-fac-dept">Department</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-details-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+                    <div><strong style="color: var(--text-muted);">Faculty Code:</strong> <span id="det-fac-id">FAC001</span></div>
+                    <div><strong style="color: var(--text-muted);">Qualification:</strong> <span id="det-fac-qualification">Ph.D</span></div>
+                    <div><strong style="color: var(--text-muted);">Email Address:</strong> <span id="det-fac-email">email@domain.com</span></div>
+                    <div><strong style="color: var(--text-muted);">Phone Number:</strong> <span id="det-fac-phone">+91 9876543210</span></div>
+                    <div><strong style="color: var(--text-muted);">Joining Date:</strong> <span id="det-fac-joining">2024-01-01</span></div>
+                </div>
+
+                <div class="assigned-subjects-section" style="border-top: 1px solid var(--glass-border); padding-top: 1.25rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--accent-gold);"><i class="fa-solid fa-book-open"></i> Assigned Subjects / Courses</h4>
+                    <div id="det-fac-subjects-list">
+                        <p style="color: var(--text-muted);">Loading assigned subjects...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Assign Subject -->
+    <div id="assign-subject-modal" class="modal-wrapper hidden">
+        <div class="modal-card glassmorphism">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-book-bookmark" style="color: var(--accent-gold);"></i> Assign Subject to Faculty</h3>
+                <button class="modal-close-btn" id="btn-close-assign-subject-modal">&times;</button>
+            </div>
+            <form id="assign-subject-form">
+                <input type="hidden" id="assign-fac-id">
+                <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                    Assigning course/subject to <strong id="assign-fac-name" style="color: var(--text-main);">Faculty</strong>:
+                </p>
+                <div class="form-group">
+                    <label for="assign-subject-select"><i class="fa-solid fa-book"></i> Select Course Subject</label>
+                    <select id="assign-subject-select" class="form-control" required style="width: 100%; padding: 0.6rem; border-radius: 8px; background: rgba(0,0,0,0.2); color: var(--text-main); border: 1px solid var(--glass-border);">
+                        <option value="">Loading subjects...</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="btn-cancel-assign-subject-modal">Cancel</button>
+                    <button type="submit" class="btn btn-gold"><i class="fa-solid fa-check"></i> Assign Subject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/faculty.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const authOk = await checkAuth(['admin', 'teacher']);
+            if (authOk) {
+                document.getElementById('header-view-title').textContent = "Faculty Directory";
+                document.getElementById('header-view-subtitle').textContent = "Manage institutional teaching staff & subject assignments";
+                
+                loadFacultyMembers();
+            }
+        });
+    </script>
+</body>
+</html>

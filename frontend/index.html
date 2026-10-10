@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System - Portal Redirect</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dark-theme flex-center" style="height: 100vh; flex-direction: column; gap: 1rem;">
+    <div style="text-align: center;">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size: 2.5rem; color: var(--accent-gold); margin-bottom: 1rem;"></i>
+        <h2>Loading Student Management System...</h2>
+        <p class="text-muted">Verifying secure academic session credentials</p>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Check session and redirect to dashboard
+            const success = await checkAuth();
+            if (success) {
+                window.location.href = `/pages/${STATE.user.role}/dashboard.html`;
+            }
+        });
+    </script>
+</body>
+</html>
