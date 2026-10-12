@@ -136,48 +136,120 @@
         document.addEventListener("DOMContentLoaded", async () => {
             const authOk = await checkAuth(['student']);
             if (authOk) {
-                document.getElementById('header-view-title').textContent = "Academic Feedback";
-                document.getElementById('header-view-subtitle').textContent = "Evaluate course teaching quality surveys";
+                const titleEl = document.getElementById('header-view-title');
+                const subtitleEl = document.getElementById('header-view-subtitle');
+                if (titleEl) titleEl.textContent = "Academic Feedback";
+                if (subtitleEl) subtitleEl.textContent = "Evaluate course teaching quality surveys";
                 
                 bindStarRatingEvents();
-                loadFeedbackView();
+                await loadFeedbackOptions();
+                await loadFeedbackView();
             }
         });
 
+        // Dynamically populate subjects and faculty dropdowns with fallbacks
+        async function loadFeedbackOptions() {
+            try {
+                const subRes = await API.get('/api/subjects');
+                if (subRes && subRes.success && subRes.subjects && subRes.subjects.length > 0) {
+                    const subSelect = document.getElementById('feedback-subject');
+                    if (subSelect) {
+                        const existingVal = subSelect.value;
+                        subSelect.innerHTML = '<option value="">-- Choose Subject --</option>' + 
+                            subRes.subjects.map(s => {
+                                const name = s.subject_name || s.name;
+                                const code = s.subject_code ? `[${s.subject_code}] ` : '';
+                                return `<option value="${name}">${code}${name}</option>`;
+                            }).join('');
+                        if (existingVal) subSelect.value = existingVal;
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not load dynamic subjects:", err);
+            }
+
+            try {
+                const facRes = await API.get('/api/reports/faculty');
+                if (facRes && facRes.success && facRes.faculty && facRes.faculty.length > 0) {
+                    const facSelect = document.getElementById('feedback-faculty');
+                    if (facSelect) {
+                        const existingVal = facSelect.value;
+                        facSelect.innerHTML = '<option value="">-- Choose Faculty --</option>' + 
+                            facRes.faculty.map(f => `<option value="${f.name}">${f.name} (${f.department || 'Faculty'})</option>`).join('');
+                        if (existingVal) facSelect.value = existingVal;
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not load dynamic faculty:", err);
+            }
+        }
+
         async function loadFeedbackView() {
-            // Reset form
-            const form = document.getElementById('submit-feedback-form');
-            if (form) form.reset();
-            resetFeedbackStars();
-            
-            // Load history
-            const res = await API.get('/api/feedback');
             const historyContainer = document.getElementById('feedback-student-history');
             if (!historyContainer) return;
+            historyContainer.innerHTML = '<div class="text-center text-muted" style="padding: 1rem;"><i class="fa-solid fa-spinner fa-spin"></i> Loading feedback records...</div>';
+            
+            // Try /api/reports/feedback first, fallback to /api/feedback
+            let res = await API.get('/api/reports/feedback');
+            if (!res || !res.success) {
+                res = await API.get('/api/feedback');
+            }
+            
             historyContainer.innerHTML = '';
             
             if (res && res.success && res.feedback && res.feedback.length > 0) {
                 res.feedback.forEach(f => {
                     const item = document.createElement('div');
                     item.className = 'feedback-history-card glassmorphism';
-                    item.style = 'padding: 12px; border-radius: 8px; font-size: 0.85rem;';
+                    item.style = 'padding: 14px; border-radius: 10px; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); margin-bottom: 8px;';
                     
-                    const avgRating = (((f.q1 || 0) + (f.q2 || 0) + (f.q3 || 0) + (f.q4 || 0) + (f.q5 || 0)) / 5).toFixed(1);
+                    const qVals = [Number(f.q1) || 0, Number(f.q2) || 0, Number(f.q3) || 0, Number(f.q4) || 0, Number(f.q5) || 0];
+                    const avgRating = (qVals.reduce((a, b) => a + b, 0) / 5).toFixed(1);
+                    const filledStars = Math.round(Number(avgRating));
+                    let starsHtml = '';
+                    for (let i = 1; i <= 5; i++) {
+                        starsHtml += `<i class="fa-solid fa-star" style="color: ${i <= filledStars ? 'var(--accent-gold, #f59e0b)' : '#444'}; font-size: 0.8rem; margin-right: 2px;"></i>`;
+                    }
                     
+                    const safeComments = f.comments ? escapeHtml(f.comments) : '';
+                    const safeSubject = escapeHtml(f.subject || 'Subject');
+                    const safeFaculty = escapeHtml(f.faculty_name || 'Faculty Member');
+
                     item.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; font-weight:600; color:var(--accent-gold);">
-                            <span>${f.subject}</span>
-                            <span>Rating: ${avgRating}/5.0</span>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <strong style="color: var(--accent-gold, #f59e0b); font-size: 0.95rem;">${safeSubject}</strong>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span>${starsHtml}</span>
+                                <span style="font-weight: 700; color: #fff; font-size: 0.85rem;">${avgRating}/5.0</span>
+                            </div>
                         </div>
-                        <div style="font-size:0.8rem; opacity:0.8; margin-top:4px;">Faculty: <strong>${f.faculty_name}</strong></div>
-                        ${f.comments ? `<div style="font-style:italic; font-size:0.75rem; color:var(--text-muted); margin-top:4px;">"${f.comments}"</div>` : ''}
-                        <div style="text-align:right; font-size:0.7rem; color:var(--text-muted); margin-top:4px;">Submitted: ${f.created_at || 'Just now'}</div>
+                        <div style="font-size: 0.82rem; color: var(--text-main, #e2e8f0); margin-bottom: 4px;">
+                            <i class="fa-solid fa-chalkboard-user" style="color: var(--accent-blue, #3b82f6); margin-right: 4px;"></i>
+                            Faculty: <strong>${safeFaculty}</strong>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">
+                            <span style="background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">Punctuality: ${f.q1}/5</span>
+                            <span style="background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">Content: ${f.q2}/5</span>
+                            <span style="background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">Clarity: ${f.q3}/5</span>
+                            <span style="background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">Guidance: ${f.q4}/5</span>
+                            <span style="background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">Fairness: ${f.q5}/5</span>
+                        </div>
+                        ${safeComments ? `<div style="font-style: italic; font-size: 0.8rem; color: #cbd5e1; background: rgba(0,0,0,0.2); padding: 6px 10px; border-radius: 6px; margin-top: 6px; border-left: 3px solid var(--accent-gold, #f59e0b);">"${safeComments}"</div>` : ''}
+                        <div style="text-align: right; font-size: 0.7rem; color: var(--text-muted, #64748b); margin-top: 6px;">
+                            <i class="fa-regular fa-clock" style="margin-right: 3px;"></i>${f.created_at || 'Recently submitted'}
+                        </div>
                     `;
                     historyContainer.appendChild(item);
                 });
             } else {
-                historyContainer.innerHTML = '<div class="text-center text-muted">No feedbacks submitted yet.</div>';
+                historyContainer.innerHTML = '<div class="text-center text-muted" style="padding: 2rem 1rem;"><i class="fa-regular fa-comments" style="font-size: 2rem; opacity: 0.4; display: block; margin-bottom: 8px;"></i>No feedbacks submitted yet.<br><span style="font-size: 0.75rem;">Your submitted evaluations will appear here.</span></div>';
             }
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
         }
 
         function resetFeedbackStars() {
@@ -201,63 +273,110 @@
                         if (targetRadio) {
                             targetRadio.checked = true;
                             const val = parseInt(targetRadio.value);
-                            labels.forEach(l => {
-                                const lId = l.getAttribute('for');
-                                const lVal = parseInt(lId.split('-')[1]);
-                                if (lVal <= val) {
-                                    l.style.color = 'var(--accent-gold)';
-                                } else {
-                                    l.style.color = '#444';
-                                }
-                            });
+                            updateContainerStars(container, val);
                         }
                     };
+
+                    lbl.onmouseenter = () => {
+                        const targetId = lbl.getAttribute('for');
+                        const val = parseInt(targetId.split('-')[1]);
+                        labels.forEach(l => {
+                            const lVal = parseInt(l.getAttribute('for').split('-')[1]);
+                            l.style.color = lVal <= val ? '#fbbf24' : '#444';
+                        });
+                    };
                 });
+
+                container.onmouseleave = () => {
+                    const checkedRadio = container.querySelector('input[type="radio"]:checked');
+                    const val = checkedRadio ? parseInt(checkedRadio.value) : 0;
+                    updateContainerStars(container, val);
+                };
+            });
+        }
+
+        function updateContainerStars(container, val) {
+            const labels = container.querySelectorAll('label');
+            labels.forEach(l => {
+                const lId = l.getAttribute('for');
+                const lVal = parseInt(lId.split('-')[1]);
+                l.style.color = lVal <= val ? 'var(--accent-gold, #f59e0b)' : '#444';
             });
         }
 
         // Form submit
-        document.getElementById('submit-feedback-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const subject = document.getElementById('feedback-subject').value;
-            const faculty_name = document.getElementById('feedback-faculty').value;
-            
-            const q1 = document.querySelector('input[name="q1"]:checked')?.value;
-            const q2 = document.querySelector('input[name="q2"]:checked')?.value;
-            const q3 = document.querySelector('input[name="q3"]:checked')?.value;
-            const q4 = document.querySelector('input[name="q4"]:checked')?.value;
-            const q5 = document.querySelector('input[name="q5"]:checked')?.value;
-            const comments = document.getElementById('feedback-comments').value;
-            
-            if (!subject) {
-                showToast("Missing Field", "Please choose a subject.", "warning");
-                return;
-            }
+        const submitForm = document.getElementById('submit-feedback-form');
+        if (submitForm) {
+            submitForm.onsubmit = async (e) => {
+                e.preventDefault();
+                const submitBtn = submitForm.querySelector('button[type="submit"]');
+                const subject = document.getElementById('feedback-subject').value;
+                const faculty_name = document.getElementById('feedback-faculty').value;
+                
+                const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+                const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+                const q3 = document.querySelector('input[name="q3"]:checked')?.value;
+                const q4 = document.querySelector('input[name="q4"]:checked')?.value;
+                const q5 = document.querySelector('input[name="q5"]:checked')?.value;
+                const comments = document.getElementById('feedback-comments').value;
+                
+                if (!subject) {
+                    showToast("Missing Field", "Please choose a subject.", "warning");
+                    return;
+                }
 
-            if (!faculty_name) {
-                showToast("Missing Field", "Please choose a faculty member.", "warning");
-                return;
-            }
+                if (!faculty_name) {
+                    showToast("Missing Field", "Please choose a faculty member.", "warning");
+                    return;
+                }
 
-            if (!q1 || !q2 || !q3 || !q4 || !q5) {
-                showToast("Missing Ratings", "Please rate all 5 evaluation questions.", "warning");
-                return;
-            }
-            
-            const payload = {
-                subject, faculty_name,
-                q1: parseInt(q1), q2: parseInt(q2), q3: parseInt(q3), q4: parseInt(q4), q5: parseInt(q5),
-                comments
+                if (!q1 || !q2 || !q3 || !q4 || !q5) {
+                    showToast("Missing Ratings", "Please rate all 5 evaluation questions with stars.", "warning");
+                    return;
+                }
+                
+                const payload = {
+                    subject,
+                    faculty_name,
+                    q1: parseInt(q1),
+                    q2: parseInt(q2),
+                    q3: parseInt(q3),
+                    q4: parseInt(q4),
+                    q5: parseInt(q5),
+                    comments: (comments || '').trim()
+                };
+                
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting Feedback...';
+                }
+
+                try {
+                    // Post to /api/reports/feedback/submit with fallback to /api/feedback/submit
+                    let res = await API.post('/api/reports/feedback/submit', payload);
+                    if (!res || !res.success) {
+                        res = await API.post('/api/feedback/submit', payload);
+                    }
+
+                    if (res && res.success) {
+                        showToast("Feedback Submitted", "Thank you! Your feedback has been recorded successfully.", "success");
+                        submitForm.reset();
+                        resetFeedbackStars();
+                        await loadFeedbackView();
+                    } else {
+                        showToast("Submission Failed", res ? (res.message || "Feedback submission failed.") : "Server connection failed.", "error");
+                    }
+                } catch (err) {
+                    console.error("Feedback submit exception:", err);
+                    showToast("Error", "Unexpected network error while submitting feedback.", "error");
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Submit Feedback';
+                    }
+                }
             };
-            
-            const res = await API.post('/api/feedback/submit', payload);
-            if (res && res.success) {
-                showToast("Feedback Submitted", "Thank you for participating in the teaching feedback!", "success");
-                loadFeedbackView();
-            } else {
-                showToast("Error", res ? res.message : "Feedback submission failed.", "error");
-            }
-        };
+        }
     </script>
 </body>
 </html>

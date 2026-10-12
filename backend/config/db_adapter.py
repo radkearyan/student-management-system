@@ -1413,9 +1413,9 @@ def get_feedback(student_id='', role='student'):
         conn = get_db_connection()
         cursor = conn.cursor()
         if role == 'student' and student_id:
-            cursor.execute("SELECT * FROM feedback WHERE student_id = ? ORDER BY created_at DESC", (student_id,))
+            cursor.execute("SELECT * FROM feedback WHERE LOWER(student_id) = LOWER(?) ORDER BY created_at DESC", (student_id,))
         else:
-            cursor.execute("SELECT f.*, s.name as student_name FROM feedback f JOIN students s ON f.student_id = s.student_id ORDER BY f.created_at DESC")
+            cursor.execute("SELECT f.*, COALESCE(s.name, f.student_id) as student_name FROM feedback f LEFT JOIN students s ON LOWER(f.student_id) = LOWER(s.student_id) ORDER BY f.created_at DESC")
         rows = [dict_from_row(r) for r in cursor.fetchall()]
         conn.close()
         return rows

@@ -76,7 +76,10 @@
         });
 
         async function loadFeedbackReport() {
-            const res = await API.get('/api/feedback');
+            let res = await API.get('/api/reports/feedback');
+            if (!res || !res.success) {
+                res = await API.get('/api/feedback');
+            }
             const body = document.getElementById('feedback-report-body');
             if (!body) return;
             body.innerHTML = '';

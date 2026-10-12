@@ -43,7 +43,7 @@ from backend.routes.attendance import attendance_bp
 from backend.routes.examination import exams_bp
 from backend.routes.fees import fees_bp
 from backend.routes.notification import notification_bp
-from backend.routes.reports import reports_bp
+from backend.routes.reports import reports_bp, feedback_bp
 from backend.routes.faculty import faculty_bp
 from backend.routes.parent import parent_bp
 from backend.routes.timetable import timetable_bp
@@ -57,6 +57,7 @@ app.register_blueprint(exams_bp, url_prefix='/api')
 app.register_blueprint(fees_bp, url_prefix='/api/fees')
 app.register_blueprint(notification_bp, url_prefix='/api/ai')
 app.register_blueprint(reports_bp, url_prefix='/api/reports')
+app.register_blueprint(feedback_bp, url_prefix='/api/feedback')
 app.register_blueprint(faculty_bp, url_prefix='/api/faculty')
 app.register_blueprint(parent_bp, url_prefix='/api/parent')
 app.register_blueprint(timetable_bp, url_prefix='/api/timetable')

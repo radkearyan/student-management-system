@@ -180,29 +180,34 @@ def get_subjects_report():
 
 
 # Student Feedback & AI Dropout Prediction
+feedback_bp = Blueprint('feedback', __name__)
+
+@feedback_bp.route('', methods=['GET'])
+@feedback_bp.route('/', methods=['GET'])
 @reports_bp.route('/feedback', methods=['GET'])
 @require_role(['admin', 'teacher', 'student'])
 def get_feedback():
     role = session['user']['role']
-    ref_id = session['user'].get('reference_id', '') or ''
+    ref_id = session['user'].get('reference_id', '') or session['user'].get('username', '') or ''
     rows = db_adapter.get_feedback(student_id=ref_id, role=role)
     return jsonify({"success": True, "feedback": rows})
 
+@feedback_bp.route('/submit', methods=['POST'])
 @reports_bp.route('/feedback/submit', methods=['POST'])
 @require_role(['student'])
 def submit_feedback():
-    student_id = session['user'].get('reference_id') or session['user'].get('username') or 'STU001'
+    student_id = str(session['user'].get('reference_id') or session['user'].get('username') or 'STU001').strip()
     data = request.get_json() or {}
-    subject = data.get('subject')
-    faculty_name = data.get('faculty_name')
+    subject = str(data.get('subject', '')).strip()
+    faculty_name = str(data.get('faculty_name', '')).strip()
     q1 = data.get('q1')
     q2 = data.get('q2')
     q3 = data.get('q3')
     q4 = data.get('q4')
     q5 = data.get('q5')
-    comments = data.get('comments', '')
+    comments = str(data.get('comments', '')).strip()
     
-    if not all([subject, faculty_name, q1, q2, q3, q4, q5]):
+    if not subject or not faculty_name or any(q is None for q in [q1, q2, q3, q4, q5]):
         return jsonify({"success": False, "message": "Missing feedback parameters"}), 400
         
     created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
