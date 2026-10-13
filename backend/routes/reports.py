@@ -228,19 +228,13 @@ def predict_dropout_risks():
     students = db_adapter.get_all_active_students()
     high_risk_list = []
     
+    # Batch load all student attendance and marks in 2 fast queries
+    att_map, marks_map = db_adapter.get_all_student_academic_metrics()
+    
     for s in students:
         sid = s['student_id']
-        att_stats = db_adapter.get_attendance_stats(sid)
-        att_rate = 100.0
-        if att_stats and att_stats['total'] > 0:
-            att_rate = float(att_stats['present']) / att_stats['total'] * 100
-            
-        marks = db_adapter.get_marks_for_student(sid)
-        avg_mark = 70.0
-        if marks:
-            total_obt = sum([m['marks_obtained'] for m in marks])
-            total_max = sum([m['max_marks'] for m in marks])
-            avg_mark = (total_obt / total_max) * 100 if total_max > 0 else 0
+        att_rate = att_map.get(sid, 100.0)
+        avg_mark = marks_map.get(sid, 70.0)
             
         ai_res = predict_performance(att_rate, avg_mark)
         

@@ -107,13 +107,25 @@ function highlightActiveNav() {
     });
 }
 
-// Fetch real backend counts for sidebar badges
+// Fetch real backend counts for sidebar badges (with client-side caching)
 async function fetchSidebarBadges() {
     try {
+        const cached = sessionStorage.getItem('sms_badge_students');
+        const cachedTime = sessionStorage.getItem('sms_badge_time');
+        const now = Date.now();
+        if (cached && cachedTime && (now - Number(cachedTime) < 30000)) {
+            const badgeStu = document.getElementById('sidebar-badge-students');
+            if (badgeStu) badgeStu.textContent = cached;
+            return;
+        }
+
         const res = await API.get('/api/analytics');
         if (res && res.metrics) {
+            const total = res.metrics.total_students || '0';
+            sessionStorage.setItem('sms_badge_students', total);
+            sessionStorage.setItem('sms_badge_time', now.toString());
             const badgeStu = document.getElementById('sidebar-badge-students');
-            if (badgeStu) badgeStu.textContent = res.metrics.total_students || '0';
+            if (badgeStu) badgeStu.textContent = total;
         }
     } catch (e) {
         console.warn("Could not load sidebar badge metrics", e);

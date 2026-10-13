@@ -3,11 +3,19 @@ import backend.config.db_adapter as db_adapter
 from backend.utils.authentication import require_role
 from backend.ai.prediction import predict_performance
 
+import time
+
 admin_bp = Blueprint('admin', __name__)
+
+_analytics_cache = {"timestamp": 0, "payload": None}
 
 @admin_bp.route('/analytics', methods=['GET'])
 @require_role(['admin', 'teacher'])
 def get_dashboard_analytics():
+    now = time.time()
+    if _analytics_cache["payload"] and (now - _analytics_cache["timestamp"] < 10):
+        return jsonify(_analytics_cache["payload"])
+
     students = db_adapter.get_students()
     total_students = len(students)
     recent_students = students[:5]
@@ -49,20 +57,12 @@ def get_dashboard_analytics():
     mod_risk_count = 0
     low_risk_count = 0
     
+    # Batch compute all student metrics in 2 fast queries
+    att_map, marks_map = db_adapter.get_all_student_academic_metrics()
     for s in students:
         sid = s['student_id']
-        att_stats = db_adapter.get_attendance_stats(sid)
-        att_rate = 100.0
-        if att_stats and att_stats['total'] > 0:
-            att_rate = float(att_stats['present']) / att_stats['total'] * 100
-            
-        marks = db_adapter.get_marks_for_student(sid)
-        avg_mark = 70.0
-        if marks:
-            total_obt = sum([m['marks_obtained'] for m in marks])
-            total_max = sum([m['max_marks'] for m in marks])
-            avg_mark = (total_obt / total_max) * 100 if total_max > 0 else 0
-            
+        att_rate = att_map.get(sid, 100.0)
+        avg_mark = marks_map.get(sid, 70.0)
         ai_res = predict_performance(att_rate, avg_mark)
         if ai_res['status'] == 'High Risk':
             high_risk_count += 1
@@ -71,7 +71,7 @@ def get_dashboard_analytics():
         else:
             low_risk_count += 1
             
-    return jsonify({
+    payload = {
         "success": True,
         "metrics": {
             "total_students": total_students,
@@ -98,7 +98,10 @@ def get_dashboard_analytics():
             "Moderate Risk": mod_risk_count,
             "Low Risk": low_risk_count
         }
-    })
+    }
+    _analytics_cache["timestamp"] = now
+    _analytics_cache["payload"] = payload
+    return jsonify(payload)
 
 @admin_bp.route('/search', methods=['GET'])
 @require_role(['admin', 'teacher', 'student'])

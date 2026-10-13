@@ -177,4 +177,45 @@ CREATE TABLE IF NOT EXISTS timetable (
     created_at TEXT NOT NULL
 );
 
+-- ====================================================================
+-- PERFORMANCE INDEXES (Optimizing Query & Filter Time Complexity)
+-- ====================================================================
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+CREATE INDEX IF NOT EXISTS idx_users_ref ON users(reference_id);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
+CREATE INDEX IF NOT EXISTS idx_students_dept ON students(department);
+CREATE INDEX IF NOT EXISTS idx_students_status ON students(status);
+CREATE INDEX IF NOT EXISTS idx_students_course ON students(course);
+
+CREATE INDEX IF NOT EXISTS idx_attendance_student ON attendance(student_id);
+CREATE INDEX IF NOT EXISTS idx_attendance_date ON attendance(date);
+CREATE INDEX IF NOT EXISTS idx_attendance_student_date ON attendance(student_id, date);
+CREATE INDEX IF NOT EXISTS idx_attendance_status ON attendance(status);
+
+CREATE INDEX IF NOT EXISTS idx_marks_student ON marks(student_id);
+CREATE INDEX IF NOT EXISTS idx_marks_exam ON marks(exam_id);
+CREATE INDEX IF NOT EXISTS idx_marks_student_exam ON marks(student_id, exam_id);
+
+CREATE INDEX IF NOT EXISTS idx_fees_student ON fees(student_id);
+CREATE INDEX IF NOT EXISTS idx_fees_status ON fees(status);
+
+CREATE INDEX IF NOT EXISTS idx_exams_subject ON exams(subject);
+CREATE INDEX IF NOT EXISTS idx_exams_date ON exams(date);
+
+CREATE INDEX IF NOT EXISTS idx_faculty_user ON faculty(user_id);
+CREATE INDEX IF NOT EXISTS idx_faculty_dept ON faculty(department);
+CREATE INDEX IF NOT EXISTS idx_faculty_fac_id ON faculty(faculty_id);
+
+CREATE INDEX IF NOT EXISTS idx_subjects_code ON subjects(subject_code);
+CREATE INDEX IF NOT EXISTS idx_subjects_dept ON subjects(department);
+
+CREATE INDEX IF NOT EXISTS idx_timetable_lookup ON timetable(department, semester, day_of_week);
+
+CREATE INDEX IF NOT EXISTS idx_feedback_student ON feedback(student_id);
+CREATE INDEX IF NOT EXISTS idx_feedback_created ON feedback(created_at);
+
+CREATE INDEX IF NOT EXISTS idx_announcements_filter ON announcements(target_role, department);
+
 

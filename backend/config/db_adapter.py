@@ -725,6 +725,79 @@ def get_all_attendance_stats():
         present = row[1] or 0
         return {"total": total, "present": present}
 
+def get_all_student_academic_metrics():
+    """
+    High-performance batch aggregation computing attendance rate and average marks
+    for all students in 2 indexed GROUP BY queries instead of 2*N sequential roundtrips.
+    Returns: (att_map, marks_map)
+    """
+    if is_firebase():
+        db_fs = get_firestore_client()
+        if not db_fs:
+            return {}, {}
+        att_docs = db_fs.collection('attendance').get()
+        att_counts = {}
+        for d in att_docs:
+            data = d.to_dict()
+            sid = data.get('student_id')
+            if not sid:
+                continue
+            if sid not in att_counts:
+                att_counts[sid] = {'total': 0, 'present': 0}
+            att_counts[sid]['total'] += 1
+            if data.get('status') == 'Present':
+                att_counts[sid]['present'] += 1
+        att_map = {sid: (v['present'] / v['total'] * 100.0) if v['total'] > 0 else 100.0 for sid, v in att_counts.items()}
+
+        marks_docs = db_fs.collection('marks').get()
+        marks_counts = {}
+        for d in marks_docs:
+            data = d.to_dict()
+            sid = data.get('student_id')
+            if not sid:
+                continue
+            if sid not in marks_counts:
+                marks_counts[sid] = {'obt': 0.0, 'max': 0.0}
+            marks_counts[sid]['obt'] += float(data.get('marks_obtained', 0))
+            marks_counts[sid]['max'] += float(data.get('max_marks', 100))
+        marks_map = {sid: (v['obt'] / v['max'] * 100.0) if v['max'] > 0 else 70.0 for sid, v in marks_counts.items()}
+        return att_map, marks_map
+    else:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # 1. Grouped Attendance
+        cursor.execute("""
+            SELECT student_id,
+                   COUNT(*) as total,
+                   SUM(CASE WHEN status='Present' THEN 1 ELSE 0 END) as present
+            FROM attendance
+            GROUP BY student_id
+        """)
+        att_map = {}
+        for r in cursor.fetchall():
+            t = r['total'] or 0
+            p = r['present'] or 0
+            att_map[r['student_id']] = (p / t * 100.0) if t > 0 else 100.0
+
+        # 2. Grouped Marks with Exam Max Marks
+        cursor.execute("""
+            SELECT m.student_id,
+                   SUM(m.marks_obtained) as total_obt,
+                   SUM(COALESCE(e.max_marks, 100)) as total_max
+            FROM marks m
+            LEFT JOIN exams e ON m.exam_id = e.exam_id
+            GROUP BY m.student_id
+        """)
+        marks_map = {}
+        for r in cursor.fetchall():
+            obt = r['total_obt'] or 0
+            max_m = r['total_max'] or 0
+            marks_map[r['student_id']] = (obt / max_m * 100.0) if max_m > 0 else 70.0
+
+        conn.close()
+        return att_map, marks_map
+
 
 # Exams
 
@@ -1303,18 +1376,16 @@ def bulk_add_fees(department, amount, status='Pending'):
         cursor = conn.cursor()
         try:
             if department and department.lower() != 'all':
-                cursor.execute("SELECT student_id FROM students WHERE department = ?", (department,))
-            else:
-                cursor.execute("SELECT student_id FROM students")
-            students = cursor.fetchall()
-            count = 0
-            for s in students:
-                sid = s['student_id']
                 cursor.execute(
-                    "INSERT INTO fees (student_id, amount, status) VALUES (?, ?, ?)",
-                    (sid, float(amount), status)
+                    "INSERT INTO fees (student_id, amount, status) SELECT student_id, ?, ? FROM students WHERE department = ?",
+                    (float(amount), status, department)
                 )
-                count += 1
+            else:
+                cursor.execute(
+                    "INSERT INTO fees (student_id, amount, status) SELECT student_id, ?, ? FROM students",
+                    (float(amount), status)
+                )
+            count = cursor.rowcount if cursor.rowcount != -1 else 0
             conn.commit()
             return True, f"Fee statement assigned to {count} student(s) successfully"
         except Exception as e:
@@ -1694,27 +1765,26 @@ def get_faculty_members(department='', search=''):
     else:
         conn = get_db_connection()
         cursor = conn.cursor()
-        query = "SELECT user_id, username, email, role, reference_id, name, phone, department FROM users WHERE role = 'teacher'"
+        query = """
+            SELECT u.user_id, u.username, u.email, u.role, u.reference_id, u.name, u.phone,
+                   COALESCE(u.department, f.department) as department,
+                   COALESCE(f.designation, 'Assistant Professor') as designation,
+                   COALESCE(f.qualification, 'M.Tech / Ph.D') as qualification,
+                   f.joining_date
+            FROM users u
+            LEFT JOIN faculty f ON (f.faculty_id IS NOT NULL AND f.faculty_id = u.reference_id)
+                                OR (f.user_id IS NOT NULL AND f.user_id = u.user_id)
+            WHERE u.role = 'teacher'
+        """
         params = []
         if department:
-            query += " AND department = ?"
-            params.append(department)
+            query += " AND (u.department = ? OR f.department = ?)"
+            params.extend([department, department])
         if search:
-            query += " AND (name LIKE ? OR username LIKE ? OR reference_id LIKE ?)"
+            query += " AND (u.name LIKE ? OR u.username LIKE ? OR u.reference_id LIKE ?)"
             params.extend([f"%{search}%", f"%{search}%", f"%{search}%"])
         cursor.execute(query, params)
         rows = [dict_from_row(r) for r in cursor.fetchall()]
-        
-        # Merge extra details from faculty table if exists
-        for r in rows:
-            fac_id = r.get('reference_id')
-            user_id = r.get('user_id')
-            cursor.execute("SELECT designation, qualification, joining_date FROM faculty WHERE (faculty_id IS NOT NULL AND faculty_id = ?) OR (user_id IS NOT NULL AND user_id = ?)", (fac_id or '', user_id))
-            f_row = cursor.fetchone()
-            if f_row:
-                r['designation'] = f_row['designation']
-                r['qualification'] = f_row['qualification']
-                r['joining_date'] = f_row['joining_date']
         conn.close()
         return rows
 
